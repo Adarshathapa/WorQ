@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://worq-ai.in/sitemap.xml

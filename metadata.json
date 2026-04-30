@@ -1,0 +1,19 @@
+{
+  "name": "WorQ-AI: PDF \u0026 Image Tools",
+  "description": "WorQ-Ai is an all-in-one online tool platform that lets you merge, compress, convert PDFs, edit images, and handle multiple file utilities in one place. Fast, secure, and mobile-friendly—perfect for students, professionals, and everyday digital tasks.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "pdf tools",
+    "merge pdf",
+    "compress pdf",
+    "image compressor",
+    "background remover",
+    "pdf converter",
+    "file tools",
+    "resize image",
+    "scan document to pdf",
+    "ocr scanner"
+  ]
+}
