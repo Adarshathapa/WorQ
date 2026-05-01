@@ -7,7 +7,8 @@
     "dev": "tsx server.ts",
     "start": "node dist/server.cjs",
     "build:server": "esbuild server.ts --platform=node --format=cjs --outfile=dist/server.cjs --bundle --external:express --external:multer",
-    "build": "vite build && npm run build:server",
+    "build:sitemap": "tsx scripts/generate-sitemap.ts",
+    "build": "npm run build:sitemap && vite build && npm run build:server",
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"

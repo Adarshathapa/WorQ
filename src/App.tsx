@@ -17,7 +17,10 @@ import { SEO } from './components/ui/SEO';
 import { TOOLS } from './constants';
 
 const parseRoute = () => {
-    const p = window.location.pathname;
+    let p = window.location.pathname;
+    if (p !== '/' && p.endsWith('/')) {
+        p = p.slice(0, -1);
+    }
     let tab: TabType = 'home';
     let tool: ToolItem | null = null;
     let category: string | null = null;

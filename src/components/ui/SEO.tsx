@@ -13,11 +13,13 @@ interface SEOProps {
 export const SEO: React.FC<SEOProps> = ({
   title,
   description,
-  canonical = 'https://worq-ai.in/',
+  canonical,
   type = 'website',
   name = 'WorQ-AI',
   image = 'https://worq-ai.in/og-image.png',
 }) => {
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname.replace(/\/$/, '') : '';
+  const finalCanonical = canonical || `https://worq-ai.in${currentPath || '/'}`;
   const siteTitle = title ? `${title} | ${name}` : 'Free PDF Tools Online | WorQ-AI';
   const siteDescription = description || 'All-in-one free PDF tools. Merge, compress, convert PDFs online. Fast and secure.';
 
@@ -26,7 +28,7 @@ export const SEO: React.FC<SEOProps> = ({
       {/* Standard metadata tags */}
       <title>{siteTitle}</title>
       <meta name="description" content={siteDescription} />
-      {canonical && <link rel="canonical" href={canonical} />}
+      {finalCanonical && <link rel="canonical" href={finalCanonical} />}
 
       {/* OpenGraph tags */}
       <meta property="og:type" content={type} />

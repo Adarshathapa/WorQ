@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { ToolItem } from '../../types';
 import { MdArrowBack } from 'react-icons/md';
 import { Icon } from '../ui/Icon';
+import { SEO } from '../ui/SEO';
 import { MergePdfTool } from '../tools/MergePdfTool';
 import { CompressImageTool } from '../tools/CompressImageTool';
 import { SplitPdfTool } from '../tools/SplitPdfTool';
@@ -65,7 +66,7 @@ export const ToolExecutionView: React.FC<{ tool: ToolItem; onBack: () => void; o
 
   return (
     <div className="flex flex-col w-full animate-in fade-in slide-in-from-right-4 duration-300 bg-[#F8F9FC] dark:bg-slate-950">
-      
+      <SEO title={tool.name} description={tool.description.substring(0, 160)} />
       {/* Header - Compact & Clean */}
       <header className="sticky top-0 z-50 h-[80px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-[#E5E7EB] dark:border-slate-800 flex items-center px-4 gap-3">
         <button 

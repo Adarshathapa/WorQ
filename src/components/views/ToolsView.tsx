@@ -3,6 +3,7 @@ import { TOOLS } from '../../constants';
 import { ToolCard } from '../ui/ToolCard';
 import { ToolItem } from '../../types';
 import { AdPlaceholder } from '../ui/AdPlaceholder';
+import { SEO } from '../ui/SEO';
 
 type CategoryFilter = 'all' | 'pdf' | 'image' | 'conversion' | 'scan_files';
 
@@ -38,9 +39,20 @@ export const ToolsView: React.FC<ToolsViewProps> = ({ onToolClick, defaultCatego
     tool => activeFilter === 'all' || tool.category === activeFilter
   );
 
+  const getSeoDetails = () => {
+    switch (activeFilter) {
+      case 'pdf': return { title: 'Free PDF Tools', desc: 'A vast collection of free PDF tools to merge, compress, edit and convert PDFs.'};
+      case 'image': return { title: 'Free Image Tools', desc: 'Powerful online tools to compress, resize, edit and convert your images.'};
+      case 'conversion': return { title: 'Free Conversion Tools', desc: 'Convert your PDFs, Images and other documents from one format to another online for free.'};
+      case 'scan_files': return { title: 'Free Document Scanning Tools', desc: 'Scan and digitize your documents instantly using our free scanning tools.'};
+      default: return { title: 'All Free Tools', desc: 'Explore all our free PDF, Image, and Document Conversion tools.' };
+    }
+  };
+  const seoDetails = getSeoDetails();
+
   return (
     <div className="flex flex-col w-full max-w-[1400px] mx-auto p-4 md:p-8 gap-6 animate-in fade-in slide-in-from-bottom-2 duration-400 bg-bg-base dark:bg-slate-950">
-      
+      <SEO title={seoDetails.title} description={seoDetails.desc} />
       <div className="px-1 mt-1">
         <h1 className="text-[24px] md:text-[32px] font-bold text-brand-gradient font-display tracking-tight leading-none">
           {activeFilter === 'all' && 'All Toolbox'}
