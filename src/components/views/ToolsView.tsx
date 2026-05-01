@@ -32,7 +32,8 @@ export const ToolsView: React.FC<ToolsViewProps> = ({ onToolClick, defaultCatego
     if (filter === 'conversion') path = '/conversion-tools';
     if (filter === 'scan_files') path = '/scanning-tools';
     window.history.pushState({}, '', path);
-    window.dispatchEvent(new Event('popstate'));
+    // DO NOT invoke window.dispatchEvent(new Event('popstate')) here
+    // doing so would trigger the global scroll-to-top handler, causing an unwanted jump.
   };
 
   const filteredTools = TOOLS.filter(

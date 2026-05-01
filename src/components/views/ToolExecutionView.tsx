@@ -45,15 +45,6 @@ const TOOL_COMPONENTS: Record<string, React.FC> = {
 export const ToolExecutionView: React.FC<{ tool: ToolItem; onBack: () => void; onToolSelect?: (tool: ToolItem) => void }> = ({ tool, onBack, onToolSelect }) => {
   const ToolComponent = TOOL_COMPONENTS[tool.id];
 
-  useEffect(() => {
-    const main = document.getElementById('main-content');
-    if (main) {
-      main.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [tool.id]);
-
   const getCategoryName = (category: string) => {
     switch (category) {
       case 'pdf': return 'PDF Tools';
@@ -68,7 +59,7 @@ export const ToolExecutionView: React.FC<{ tool: ToolItem; onBack: () => void; o
     <div className="flex flex-col w-full animate-in fade-in slide-in-from-right-4 duration-300 bg-[#F8F9FC] dark:bg-slate-950">
       <SEO title={tool.name} description={tool.description.substring(0, 160)} />
       {/* Header - Compact & Clean */}
-      <header className="sticky top-0 z-50 h-[80px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-[#E5E7EB] dark:border-slate-800 flex items-center px-4 gap-3">
+      <header className="sticky top-[64px] md:top-[72px] z-40 h-[72px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-[#E5E7EB] dark:border-slate-800 flex items-center px-4 gap-3">
         <button 
           onClick={onBack}
           className="w-10 h-10 rounded-full flex items-center justify-center text-[#111827] dark:text-white active:scale-90 transition-transform"

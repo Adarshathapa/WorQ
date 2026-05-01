@@ -90,36 +90,6 @@ export const HomeView: React.FC<{ onToolClick: (tool: ToolItem) => void }> = ({ 
   return (
     <div className="flex flex-col w-full max-w-[1400px] mx-auto p-4 md:p-8 gap-6 md:gap-10 bg-bg-base dark:bg-slate-950">
       
-      {/* Header */}
-      {!isSearching && (
-        <div className="flex items-center justify-between px-1 md:hidden">
-          <div className="flex flex-col">
-            <h1 className="text-[24px] font-bold text-brand-gradient font-display tracking-tight leading-none">
-              WorQ-Ai
-            </h1>
-            <p className="text-[#6B7280] dark:text-gray-500 font-medium text-[13px] mt-1">Efficient local file processing</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={toggleDarkMode}
-              className={`w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border border-[#E5E7EB] dark:border-slate-700 active:scale-95 transition-all duration-300 relative group ${
-                isDarkMode 
-                  ? 'text-yellow-400 shadow-[0_0_15px_-3px_rgba(250,204,21,0.4)]' 
-                  : 'text-brand-pink shadow-[0_0_15px_-3px_rgba(255,107,157,0.4)]'
-              }`}
-            >
-              <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-current blur-md scale-75" />
-              <div className="relative z-10">
-                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-              </div>
-            </button>
-            <button className="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border border-[#E5E7EB] dark:border-slate-700 overflow-hidden active:scale-90 transition-transform">
-              <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Guest&backgroundColor=transparent" alt="User" />
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Search Bar */}
       <div className="relative px-1 -mt-2 w-full max-w-[800px] mx-auto">
         <div className="absolute inset-y-0 left-[22px] flex items-center pointer-events-none">

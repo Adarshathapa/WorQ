@@ -13,6 +13,7 @@ import { ToolExecutionView } from './components/views/ToolExecutionView';
 import { BlogpostView } from './components/views/BlogpostView';
 import { TabType, ToolItem } from './types';
 import { useSettings } from './hooks/useSettings';
+import { useScrollManagement } from './hooks/useScrollManagement';
 import { SEO } from './components/ui/SEO';
 import { TOOLS } from './constants';
 
@@ -59,6 +60,7 @@ const parseRoute = () => {
 };
 
 export default function App() {
+  useScrollManagement();
   const { isDarkMode } = useSettings();
   
   const parsedValue = parseRoute();
@@ -79,8 +81,8 @@ export default function App() {
 
   const navigate = (path: string) => {
     if (window.location.pathname !== path) {
-       window.history.pushState({}, '', path);
-       window.dispatchEvent(new Event('popstate'));
+       window.history.pushState({ scrollPos: 0 }, '', path);
+       window.dispatchEvent(new PopStateEvent('popstate', { state: { scrollPos: 0 } }));
     }
   };
 

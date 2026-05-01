@@ -1,8 +1,10 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import { MdHome, MdApps, MdHistory, MdSettings, MdFolder } from 'react-icons/md';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { TabType } from '../../types';
 import { InstallPrompt } from './InstallPrompt';
+import { useSettings } from '../../hooks/useSettings';
+import { Sun, Moon } from 'lucide-react';
 
 interface LayoutProps {
   activeTab: TabType;
@@ -11,87 +13,60 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ activeTab, onTabChange, children }) => {
-  const [isNavVisible, setIsNavVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleScroll = useCallback((e: React.UIEvent<HTMLElement>) => {
-    const currentScrollY = e.currentTarget.scrollTop;
-    const diff = currentScrollY - lastScrollY;
-    
-    if (diff > 5) {
-      // scroll down -> hide
-      setIsNavVisible(false);
-    } else if (diff < -5 || currentScrollY <= 10) {
-      // scroll up -> show
-      setIsNavVisible(true);
-    }
-    
-    setLastScrollY(currentScrollY);
-    
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    
-    timeoutRef.current = setTimeout(() => {
-      setIsNavVisible(true);
-    }, 200);
-  }, [lastScrollY]);
-
-  // Handle active tab change to reset visibility
-  useEffect(() => {
-    setIsNavVisible(true);
-  }, [activeTab]);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
+  const { isDarkMode, toggleDarkMode } = useSettings();
 
   return (
-    <div className="flex flex-col h-screen w-full bg-bg-light dark:bg-slate-950 relative overflow-hidden transition-colors duration-300">
-      
-      {/* Install Prompt Overlay */}
+    <div className="min-h-screen w-full bg-bg-light dark:bg-slate-950 flex flex-col relative transition-colors duration-300 pt-[64px] md:pt-[72px] pb-[64px] md:pb-0">
       <InstallPrompt />
 
-      {/* Desktop Top Navigation */}
-      <header className="hidden md:flex h-[72px] bg-white dark:bg-slate-900 border-b border-[#EEF0F5] dark:border-slate-800 items-center justify-between px-8 flex-shrink-0 z-50">
+      {/* Universal Top Navigation Header */}
+      <header className="fixed top-0 left-0 right-0 h-[64px] md:h-[72px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-[#EEF0F5] dark:border-slate-800 flex items-center justify-between px-4 md:px-8 z-50 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="w-[32px] h-[32px] rounded-lg bg-brand-light dark:bg-brand-pink/10 flex items-center justify-center">
             <span className="text-[18px] font-bold text-brand-pink">W</span>
           </div>
-          <div>
+          <div className="hidden sm:block">
             <h1 className="text-[20px] font-bold text-[#111827] dark:text-white leading-none tracking-tight font-display mb-0.5 mt-[2px]">WorQ-Ai</h1>
             <p className="text-[11px] text-[#6B7280] dark:text-gray-400 font-medium leading-none">Efficient local file processing</p>
           </div>
         </div>
         
-        <nav className="flex items-center gap-8">
-          <DesktopNavItem icon={<MdHome size={20} />} label="Home" isActive={activeTab === 'home'} onClick={() => onTabChange('home')} />
-          <DesktopNavItem icon={<MdApps size={20} />} label="Tools" isActive={activeTab === 'tools'} onClick={() => onTabChange('tools')} />
-          <DesktopNavItem icon={<MdFolder size={20} />} label="Files" isActive={activeTab === 'files'} onClick={() => onTabChange('files')} />
-          <DesktopNavItem icon={<MdSettings size={20} />} label="Settings" isActive={activeTab === 'settings'} onClick={() => onTabChange('settings')} />
-        </nav>
-      </header>
+        <div className="flex items-center gap-2 md:gap-8">
+          <nav className="hidden md:flex items-center gap-8">
+            <DesktopNavItem icon={<MdHome size={20} />} label="Home" isActive={activeTab === 'home'} onClick={() => onTabChange('home')} />
+            <DesktopNavItem icon={<MdApps size={20} />} label="Tools" isActive={activeTab === 'tools'} onClick={() => onTabChange('tools')} />
+            <DesktopNavItem icon={<MdFolder size={20} />} label="Files" isActive={activeTab === 'files'} onClick={() => onTabChange('files')} />
+            <DesktopNavItem icon={<MdSettings size={20} />} label="Settings" isActive={activeTab === 'settings'} onClick={() => onTabChange('settings')} />
+          </nav>
 
-      {/* Main Content Area - Scrollable */}
-      <main 
-        id="main-content"
-        onScroll={handleScroll}
-        className="flex-1 overflow-y-auto overflow-x-hidden relative scroll-smooth no-scrollbar"
-      >
-        <div className="flex flex-col min-h-full">
-          <div className="flex-1 w-full relative">
-            {children}
+          <div className="flex items-center gap-2 ml-4">
+            <button 
+              onClick={toggleDarkMode}
+              className={`w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border border-[#E5E7EB] dark:border-slate-700 active:scale-95 transition-all duration-300 relative group ${
+                isDarkMode 
+                  ? 'text-yellow-400 shadow-[0_0_15px_-3px_rgba(250,204,21,0.4)]' 
+                  : 'text-brand-pink shadow-[0_0_15px_-3px_rgba(255,107,157,0.4)]'
+              }`}
+            >
+              <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-current blur-md scale-75" />
+              <div className="relative z-10">
+                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+              </div>
+            </button>
+            <button className="md:hidden w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border border-[#E5E7EB] dark:border-slate-700 overflow-hidden active:scale-90 transition-transform">
+              <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Guest&backgroundColor=transparent" alt="User" />
+            </button>
           </div>
         </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main id="main-content" className="flex-1 w-full relative">
+        {children}
       </main>
 
       {/* Bottom Navigation - Mobile Only */}
-      <nav className="md:hidden h-[64px] bg-white dark:bg-slate-900 border-t border-[#EEF0F5] dark:border-slate-800 flex items-center justify-around px-2 pb-safe z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.02)] flex-shrink-0">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-[64px] bg-white dark:bg-slate-900 border-t border-[#EEF0F5] dark:border-slate-800 flex items-center justify-around px-2 pb-safe z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.02)]">
         <NavItem icon={<MdHome />} label="Home" isActive={activeTab === 'home'} onClick={() => onTabChange('home')} />
         <NavItem icon={<MdApps />} label="Tools" isActive={activeTab === 'tools'} onClick={() => onTabChange('tools')} />
         <NavItem icon={<MdFolder />} label="Files" isActive={activeTab === 'files'} onClick={() => onTabChange('files')} />
