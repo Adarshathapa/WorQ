@@ -4,7 +4,6 @@ import { TOOLS } from '../../constants';
 import { ToolCard } from '../ui/ToolCard';
 import { Icon } from '../ui/Icon';
 import { ToolItem } from '../../types';
-import { Footer } from '../ui/Footer';
 import { useSettings } from '../../hooks/useSettings';
 import { AdPlaceholder } from '../ui/AdPlaceholder';
 
@@ -142,8 +141,6 @@ export const HomeView: React.FC<{ onToolClick: (tool: ToolItem) => void }> = ({ 
           </>
         )}
       </div>
-
-      <Footer />
       
     </div>
   );

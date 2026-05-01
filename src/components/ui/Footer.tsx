@@ -5,6 +5,14 @@ import { MdClose } from 'react-icons/md';
 export const Footer: React.FC = () => {
   const [activeLayer, setActiveLayer] = useState<'privacy' | 'terms' | 'disclaimer' | null>(null);
 
+  const navigate = (path: string) => {
+    if (window.location.pathname !== path) {
+       window.history.pushState({ scrollPos: 0 }, '', path);
+       window.dispatchEvent(new PopStateEvent('popstate', { state: { scrollPos: 0 } }));
+       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   const legalContent = {
     privacy: {
       title: 'Privacy Policy',
@@ -21,25 +29,62 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="mt-8 pt-6 pb-0 border-t border-gray-100 dark:border-slate-800 flex flex-col items-center gap-3 animate-in fade-in duration-700">
-      <div className="flex flex-col items-center text-center">
-        <p className="text-[12px] text-gray-500 dark:text-gray-400 font-medium tracking-tight">
-          Your files stay on your device. No upload.
+    <footer className="mt-12 w-full border-t border-[#EEF0F5] dark:border-slate-800 bg-[#F8F9FC] dark:bg-slate-900 pb-[80px] md:pb-8 flex flex-col items-center">
+      <div className="w-full max-w-[1200px] px-6 py-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        
+        {/* Brand Section */}
+        <div className="flex flex-col gap-3">
+          <div 
+            className="flex items-center gap-2 cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            onClick={() => navigate('/')}
+          >
+            <div className="w-[28px] h-[28px] rounded-lg bg-linear-to-br from-[#FF2D55] to-[#FF8A3D] flex items-center justify-center shadow-md">
+              <span className="text-[16px] font-black text-white leading-none font-display">W</span>
+            </div>
+            <h1 className="text-[20px] text-[#111827] dark:text-white leading-none tracking-tight font-display flex items-baseline">
+              <span className="font-extrabold tracking-tight">WorQ</span>
+              <span className="font-light text-brand-gradient ml-[1.5px] tracking-[0.15em]">-AI</span>
+            </h1>
+          </div>
+          <p className="text-[13px] text-[#6B7280] dark:text-gray-400 max-w-[250px] leading-relaxed">
+            Fast, secure, and smart local file processing right in your browser.
+          </p>
+        </div>
+
+        {/* Links */}
+        <div className="flex flex-row gap-12 md:gap-16">
+          {/* Quick Links */}
+          <div className="flex flex-col gap-3">
+            <h4 className="text-[12px] font-bold text-[#111827] dark:text-gray-200 uppercase tracking-widest mb-1">Platform</h4>
+            <button onClick={() => navigate('/')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">Home</button>
+            <button onClick={() => navigate('/pdf-tools')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">All Tools</button>
+            <button onClick={() => navigate('/file-manager')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">My Files</button>
+          </div>
+          
+          {/* Legal / Contact */}
+          <div className="flex flex-col gap-3">
+            <h4 className="text-[12px] font-bold text-[#111827] dark:text-gray-200 uppercase tracking-widest mb-1">Legal</h4>
+            <button onClick={() => setActiveLayer('privacy')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">Privacy Policy</button>
+            <button onClick={() => setActiveLayer('terms')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">Terms of Service</button>
+            <button onClick={() => setActiveLayer('disclaimer')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">Disclaimer</button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Bottom bar */}
+      <div className="w-full max-w-[1200px] border-t border-[#EEF0F5] dark:border-slate-800 px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p className="text-[12px] text-[#9CA3AF] dark:text-gray-500 font-medium">
+          &copy; {new Date().getFullYear()} WorQ-AI. All rights reserved.
         </p>
-      </div>
-
-      <div className="flex flex-wrap justify-center items-center gap-x-2 text-[12px] font-bold text-brand-pink">
-        <button onClick={() => setActiveLayer('privacy')} className="hover:text-brand-orange transition-colors active:scale-95">Privacy Policy</button>
-        <span className="text-[#E5E7EB] dark:text-slate-800 font-normal">·</span>
-        <button onClick={() => setActiveLayer('terms')} className="hover:text-brand-orange transition-colors active:scale-95">Terms & Conditions</button>
-        <span className="text-[#E5E7EB] dark:text-slate-800 font-normal">·</span>
-        <button onClick={() => setActiveLayer('disclaimer')} className="hover:text-brand-orange transition-colors active:scale-95">Disclaimer</button>
-      </div>
-
-      <div className="flex flex-col items-center mt-1">
-        <span className="text-[11px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest">
-          WorQ-Ai v1.1
-        </span>
+        <div className="flex flex-col items-center gap-1">
+           <span className="text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest">
+             WorQ-Ai v1.1
+           </span>
+           <div className="flex items-center gap-2 text-[12px] text-[#9CA3AF] dark:text-gray-500 font-medium">
+             <span>Made with precision</span>
+             <span className="text-brand-pink">&hearts;</span>
+           </div>
+        </div>
       </div>
 
       {/* LEGAL MODAL */}

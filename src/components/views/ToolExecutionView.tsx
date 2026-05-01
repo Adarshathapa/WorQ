@@ -22,6 +22,10 @@ import { MockApiTool } from '../tools/MockApiTool';
 import { SignatureGenTool } from '../tools/SignatureGenTool';
 import { RelatedTools } from '../ui/RelatedTools';
 import { AdPlaceholder } from '../ui/AdPlaceholder';
+import { OdtPdfTool } from '../tools/OdtPdfTool';
+import { JpgPngTool } from '../tools/JpgPngTool';
+import { RtfPdfTool } from '../tools/RtfPdfTool';
+import { PdfTextTool } from '../tools/PdfTextTool';
 
 const TOOL_COMPONENTS: Record<string, React.FC> = {
   'merge-pdf': MergePdfTool,
@@ -40,10 +44,18 @@ const TOOL_COMPONENTS: Record<string, React.FC> = {
   'word-to-pdf': WordPdfTool,
   'pdf-converter': UniversalConverterTool,
   'signature-gen': SignatureGenTool,
+  'odt-to-pdf': OdtPdfTool,
+  'jpg-to-png': JpgPngTool,
+  'rtf-to-pdf': RtfPdfTool,
+  'pdf-to-text': PdfTextTool,
 };
 
 export const ToolExecutionView: React.FC<{ tool: ToolItem; onBack: () => void; onToolSelect?: (tool: ToolItem) => void }> = ({ tool, onBack, onToolSelect }) => {
   const ToolComponent = TOOL_COMPONENTS[tool.id];
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [tool.id]);
 
   const getCategoryName = (category: string) => {
     switch (category) {
@@ -59,25 +71,25 @@ export const ToolExecutionView: React.FC<{ tool: ToolItem; onBack: () => void; o
     <div className="flex flex-col w-full animate-in fade-in slide-in-from-right-4 duration-300 bg-[#F8F9FC] dark:bg-slate-950">
       <SEO title={tool.name} description={tool.description.substring(0, 160)} />
       {/* Header - Compact & Clean */}
-      <header className="sticky top-[64px] md:top-[72px] z-40 h-[72px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-[#E5E7EB] dark:border-slate-800 flex items-center px-4 gap-3">
+      <header className="sticky top-[64px] md:top-[72px] z-40 h-[72px] md:h-[80px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-[#E5E7EB] dark:border-slate-800 flex items-center px-4 md:px-8 gap-4 shadow-sm">
         <button 
           onClick={onBack}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-[#111827] dark:text-white active:scale-90 transition-transform"
+          className="w-10 h-10 -ml-2 md:ml-0 rounded-full flex items-center justify-center text-[#111827] dark:text-white hover:bg-gray-100 dark:hover:bg-slate-800 active:scale-95 transition-all"
         >
           <MdArrowBack size={24} />
         </button>
         
         <div className="flex items-center gap-3 overflow-hidden flex-1">
-          <Icon name={tool.iconName} showContainer className="shrink-0 scale-90" />
+          <Icon name={tool.iconName} showContainer className="shrink-0 scale-90 md:scale-100 shadow-sm" />
           <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-1 text-[10px] font-bold text-brand-pink mb-0.5 uppercase tracking-wider">
-               <span onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new Event('popstate')); }} className="cursor-pointer hover:underline">Home</span>
-               <span>&gt;</span>
-               <span onClick={onBack} className="cursor-pointer hover:underline">{getCategoryName(tool.category)}</span>
-               <span>&gt;</span>
-               <span className="text-gray-500">{tool.name}</span>
+            <div className="hidden md:flex items-center gap-1.5 text-[11px] font-bold text-[#6B7280] dark:text-gray-400 mb-1 uppercase tracking-wider">
+               <span onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new Event('popstate')); }} className="cursor-pointer hover:text-brand-pink transition-colors flex items-center">
+                 Home
+               </span>
+               <span className="opacity-50">/</span>
+               <span onClick={onBack} className="cursor-pointer hover:text-brand-pink transition-colors">{getCategoryName(tool.category)}</span>
             </div>
-            <h1 className="text-[17px] font-bold text-[#111827] dark:text-white leading-tight truncate font-display">{tool.name}</h1>
+            <h1 className="text-[18px] md:text-[22px] font-semibold text-[#111827] dark:text-white leading-tight truncate tracking-tight font-display max-w-full">{tool.name}</h1>
           </div>
         </div>
       </header>
