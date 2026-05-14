@@ -1,8 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { FileUploader } from '../ui/FileUploader';
 import { ImageIcon, Wand2, Download, Image as ImageIcon2, Palette, SlidersHorizontal, Trash2, Upload } from 'lucide-react';
 import { useFileManager } from '../../hooks/useFileManager';
 import { ToolGuide } from '../ui/ToolGuide';
+import { ProcessingProgressBar } from '../ui/ProcessingProgressBar';
+import { useProcessingSuccess } from '../../hooks/useProcessingSuccess';
 
 export const BgRemoverTool: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -27,6 +29,11 @@ export const BgRemoverTool: React.FC = () => {
   const { saveFile } = useFileManager();
   const [errorMsg, setErrorMsg] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { resultRef } = useProcessingSuccess(outputUrl, `WorQ-Ai_Result_${file?.name || Date.now()}.png`, () => {
+    // We defer the downloadImageResult so state is fully ready
+    downloadImageResult();
+  });
 
   const handleFiles = (files: File[]) => {
     if (files.length > 0) {
@@ -54,7 +61,7 @@ export const BgRemoverTool: React.FC = () => {
     if (!file) return;
     setIsProcessing(true);
     setErrorMsg('');
-    setProgressMsg('Uploading image to server...');
+    setProgressMsg('AI is analyzing image...');
     
     try {
       const formData = new FormData();
@@ -70,6 +77,7 @@ export const BgRemoverTool: React.FC = () => {
         throw new Error(errorData?.error || 'Failed to remove background.');
       }
       
+      setProgressMsg('Cleaning up edges...');
       const blob = await res.blob();
       const outputDataUrl = URL.createObjectURL(blob);
       setOutputUrl(outputDataUrl);
@@ -114,8 +122,12 @@ export const BgRemoverTool: React.FC = () => {
     try {
       const downloadName = `WorQ-Ai_Result_${Date.now()}.png`;
       const img = new Image();
+      const loadImg = new Promise<void>((resolve) => {
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+      });
       img.src = outputUrl;
-      await new Promise(r => { img.onload = r; });
+      await loadImg;
 
       const canvas = document.createElement('canvas');
       canvas.width = img.width;
@@ -127,15 +139,24 @@ export const BgRemoverTool: React.FC = () => {
       // Draw Background
       if (bgType === 'image' && bgImageUrl) {
         const bgImg = new Image();
+        bgImg.crossOrigin = 'anonymous'; // Help with external images if any
+        const loadBg = new Promise<void>((resolve) => {
+          bgImg.onload = () => resolve();
+          bgImg.onerror = () => resolve();
+        });
         bgImg.src = bgImageUrl;
-        await new Promise(r => { bgImg.onload = r; });
+        await loadBg;
         
-        // Calculate cover cover object-fit
-        const scale = Math.max(canvas.width / bgImg.width, canvas.height / bgImg.height);
-        const x = (canvas.width / scale - bgImg.width) / 2;
-        const y = (canvas.height / scale - bgImg.height) / 2;
-        
-        ctx.drawImage(bgImg, x * scale, y * scale, bgImg.width * scale, bgImg.height * scale);
+        if (bgImg.width && bgImg.height) {
+          // Calculate object-fit: cover
+          const scale = Math.max(canvas.width / bgImg.width, canvas.height / bgImg.height);
+          const newWidth = bgImg.width * scale;
+          const newHeight = bgImg.height * scale;
+          const x = (canvas.width - newWidth) / 2;
+          const y = (canvas.height - newHeight) / 2;
+          
+          ctx.drawImage(bgImg, x, y, newWidth, newHeight);
+        }
       } else if (bgType !== 'transparent') {
         drawBackground(ctx, canvas.width, canvas.height);
       }
@@ -200,7 +221,7 @@ export const BgRemoverTool: React.FC = () => {
     <div className="flex flex-col gap-4 w-full animate-in fade-in duration-300">
       
       {outputUrl ? (
-        <div className="flex flex-col animate-in zoom-in-95 duration-300 w-full max-w-4xl mx-auto">
+        <div ref={resultRef} className="flex flex-col animate-in zoom-in-95 duration-300 w-full max-w-4xl mx-auto">
           <h3 className="text-[20px] font-bold text-[#111827] dark:text-gray-100 mb-4 font-display tracking-tight text-center">Customize Image</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
@@ -406,21 +427,16 @@ export const BgRemoverTool: React.FC = () => {
                 </div>
               )}
 
+              <ProcessingProgressBar isProcessing={isProcessing} text={progressMsg} durationMs={3000} />
+              
               <button 
                 onClick={removeBackground}
                 disabled={isProcessing}
-                className="w-full h-[60px] bg-brand-pink text-white rounded-[16px] font-bold shadow-xl shadow-brand-pink/20 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-[16px] mt-2 relative overflow-hidden group"
+                className={`w-full h-[60px] ${isProcessing ? 'bg-gray-100 dark:bg-slate-800 text-gray-400' : 'bg-brand-pink text-white shadow-xl shadow-brand-pink/20 active:scale-[0.98]'} rounded-[16px] font-bold transition-all flex justify-center items-center gap-2 text-[16px] mt-2 relative overflow-hidden group`}
               >
                 {!isProcessing && <div className="absolute inset-0 bg-white/20 w-full rotate-[30deg] scale-y-150 -translate-x-[150%] hover:translate-x-[150%] transition-transform duration-700"></div>}
                 {isProcessing ? 'AI Model is processing...' : <><Wand2 size={24} strokeWidth={2} /> Remove Background</>}
               </button>
-              
-              {isProcessing && (
-                <div className="flex flex-col items-center justify-center py-4 gap-3 animate-in fade-in duration-300">
-                   <div className="w-8 h-8 border-4 border-brand-pink/30 border-t-brand-pink rounded-full animate-spin"></div>
-                   <p className="text-center text-[13px] text-brand-pink dark:text-brand-pink font-bold tracking-wide">{progressMsg}</p>
-                </div>
-              )}
             </div>
           )}
         </div>

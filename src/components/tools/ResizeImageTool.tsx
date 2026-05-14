@@ -3,10 +3,13 @@ import { FileUploader } from '../ui/FileUploader';
 import { MdImage, MdDownload, MdRefresh } from 'react-icons/md';
 import { useFileManager } from '../../hooks/useFileManager';
 import { ToolGuide } from '../ui/ToolGuide';
+import { ProcessingResult } from '../ui/ProcessingResult';
+import { useProcessingSuccess } from '../../hooks/useProcessingSuccess';
+import JSZip from 'jszip';
 
 export const ResizeImageTool: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [outputUrl, setOutputUrl] = useState<string | null>(null);
   const [resultFileName, setResultFileName] = useState('');
@@ -17,21 +20,21 @@ export const ResizeImageTool: React.FC = () => {
   const [originalRatio, setOriginalRatio] = useState<number>(1);
   const { saveFile } = useFileManager();
 
-  const handleFiles = (files: File[]) => {
-    if (files.length > 0) {
-      const selected = files[0];
-      setFile(selected);
+  const handleFiles = (selectedFiles: File[]) => {
+    if (selectedFiles.length > 0) {
+      setFiles(selectedFiles);
       setOutputUrl(null);
-      const url = URL.createObjectURL(selected);
-      setImageUrl(url);
+      const urls = selectedFiles.map(f => URL.createObjectURL(f));
+      setImageUrls(urls);
 
+      // Load first image to get default width/height and ratio
       const img = new Image();
       img.onload = () => {
         setWidth(img.width);
         setHeight(img.height);
         setOriginalRatio(img.width / img.height);
       };
-      img.src = url;
+      img.src = urls[0];
     }
   };
 
@@ -49,48 +52,78 @@ export const ResizeImageTool: React.FC = () => {
     }
   };
 
-  const resizeImage = async () => {
-    if (!imageUrl) return;
+  const processSingleImage = async (file: File, url: string): Promise<Blob> => {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = url;
+    });
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Could not get canvas context');
+
+    ctx.drawImage(img, 0, 0, width, height);
+
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) reject(new Error('Canvas to Blob failed'));
+        else resolve(blob);
+      }, file.type || 'image/jpeg', 0.9);
+    });
+  };
+
+  const resizeImages = async () => {
+    if (files.length === 0 || imageUrls.length === 0) return;
     setIsProcessing(true);
 
     try {
-      const img = new Image();
-      img.crossOrigin = 'Anonymous';
-      
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = imageUrl;
-      });
-
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Could not get canvas context');
-
-      ctx.drawImage(img, 0, 0, width, height);
-
-      canvas.toBlob((blob) => {
-        if (!blob) return;
-        const fileName = `WorQ-Ai_Resize_${Date.now()}.jpg`;
-        const dataUrl = canvas.toDataURL(file?.type || 'image/png', 0.9);
+      if (files.length === 1) {
+        const blob = await processSingleImage(files[0], imageUrls[0]);
+        const fileName = `WorQ-Ai_Resize_${Date.now()}.${files[0].name.split('.').pop()}`;
+        const url = URL.createObjectURL(blob);
         
-        setOutputUrl(dataUrl);
+        setOutputUrl(url);
         setResultFileName(fileName);
 
         saveFile({
           name: fileName,
           toolName: 'Resize Image',
-          type: `image/jpeg`,
+          type: files[0].type || 'image/jpeg',
           size: blob.size
         }, blob);
-      }, file?.type || 'image/jpeg', 0.9);
-
+      } else {
+        const zip = new JSZip();
+        for (let i = 0; i < files.length; i++) {
+          const blob = await processSingleImage(files[i], imageUrls[i]);
+          const baseName = files[i].name.substring(0, files[i].name.lastIndexOf('.')) || files[i].name;
+          const ext = files[i].name.split('.').pop() || 'jpg';
+          zip.file(`${baseName}_resized.${ext}`, blob);
+        }
+        
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const fileName = `WorQ-Ai_Resized_Images_${Date.now()}.zip`;
+        const url = URL.createObjectURL(zipBlob);
+        
+        setOutputUrl(url);
+        setResultFileName(fileName);
+        
+        saveFile({
+          name: fileName,
+          toolName: 'Resize Images (Batch)',
+          type: 'application/zip',
+          size: zipBlob.size
+        }, zipBlob);
+      }
     } catch (e) {
       console.error(e);
-      alert('Error resizing image.');
+      alert('Error resizing image(s).');
     } finally {
       setIsProcessing(false);
     }
@@ -106,42 +139,29 @@ export const ResizeImageTool: React.FC = () => {
     document.body.removeChild(a);
   };
 
+  const { resultRef } = useProcessingSuccess(outputUrl, resultFileName, handleDownload);
 
   return (
     <div className="flex flex-col gap-4 w-full animate-in fade-in duration-300">
       
       {outputUrl ? (
-        <div className="flex flex-col items-center py-4 animate-in zoom-in-95 duration-300 text-center">
-          <div className="w-[64px] h-[64px] rounded-full bg-green-500/10 text-green-500 flex items-center justify-center mb-4">
-            <MdImage size={32} />
-          </div>
-          <h3 className="text-[18px] font-bold text-[#111827] dark:text-gray-100 mb-1 font-display tracking-tight">Image Resized!</h3>
-          <p className="text-[13px] text-[#6B7280] dark:text-gray-400 mb-8 font-medium">New dimensions: {width} × {height}px.</p>
-          
-          <div className="flex flex-col gap-3 w-full">
-            <button
-              onClick={handleDownload}
-              className="w-full h-[48px] bg-brand-pink text-white rounded-[12px] font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-pink/20 active:scale-95 transition-all"
-            >
-              <MdDownload size={20} /> Download Image
-            </button>
-            <button 
-              onClick={() => { setFile(null); setImageUrl(null); setOutputUrl(null); }}
-              className="w-full h-[48px] bg-brand-light text-brand-pink rounded-[12px] font-bold active:scale-95 transition-all text-[14px]"
-            >
-              Resize Another
-            </button>
-          </div>
-        </div>
+        <ProcessingResult 
+          resultRef={resultRef}
+          onDownload={handleDownload}
+          onReset={() => { setFiles([]); setImageUrls([]); setOutputUrl(null); }}
+          title={files.length > 1 ? "Images Resized Successfully!" : "Image Resized!"}
+          description={files.length > 1 ? `New dimensions applied to ${files.length} images.` : `New dimensions: ${width} × ${height}px.`}
+        />
       ) : (
         <div className="flex flex-col gap-4">
-          {!file ? (
+          {files.length === 0 ? (
             <FileUploader 
               accept="image/*" 
-              multiple={false} 
+              multiple={true}
+              maxFiles={20}
               onFilesSelected={handleFiles} 
-              label="Select file to process"
-              subLabel="Tap to upload image"
+              label="Select images to process"
+              subLabel="Drop single or multiple images here"
             />
           ) : (
             <div className="flex flex-col gap-4 animate-in slide-in-from-bottom-2 duration-300">
@@ -150,10 +170,16 @@ export const ResizeImageTool: React.FC = () => {
                   <MdImage size={24} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[14px] font-bold text-[#111827] dark:text-white truncate">{file.name}</p>
-                  <p className="text-[12px] font-medium text-[#6B7280]">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-[14px] font-bold text-[#111827] dark:text-white truncate">
+                    {files.length === 1 ? files[0].name : `${files.length} images selected`}
+                  </p>
+                  <p className="text-[12px] font-medium text-[#6B7280]">
+                    {files.length === 1 
+                      ? `${(files[0].size / 1024 / 1024).toFixed(2)} MB` 
+                      : 'Batch processing enabled'}
+                  </p>
                 </div>
-                <button onClick={() => setFile(null)} className="text-[12px] font-bold text-brand-pink hover:bg-brand-light px-3 py-1.5 rounded-lg transition-all">Replace</button>
+                <button onClick={() => { setFiles([]); setImageUrls([]); }} className="text-[12px] font-bold text-brand-pink hover:bg-brand-light px-3 py-1.5 rounded-lg transition-all">Replace</button>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
@@ -161,7 +187,7 @@ export const ResizeImageTool: React.FC = () => {
                   <label className="text-[14px] font-bold text-[#111827] dark:text-gray-200 mb-2 block px-1">Width (px)</label>
                   <input 
                     type="number" 
-                    value={width}
+                    value={width === 0 ? '' : width}
                     onChange={(e) => handleWidthChange(Number(e.target.value))}
                     className="w-full bg-[#F8F9FC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 text-[#111827] dark:text-gray-100 rounded-[12px] h-[48px] px-4 focus:outline-none focus:ring-2 focus:ring-brand-pink/20 transition-all text-[15px] font-bold"
                   />
@@ -170,7 +196,7 @@ export const ResizeImageTool: React.FC = () => {
                   <label className="text-[14px] font-bold text-[#111827] dark:text-gray-200 mb-2 block px-1">Height (px)</label>
                   <input 
                     type="number" 
-                    value={height}
+                    value={height === 0 ? '' : height}
                     onChange={(e) => handleHeightChange(Number(e.target.value))}
                     className="w-full bg-[#F8F9FC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 text-[#111827] dark:text-gray-100 rounded-[12px] h-[48px] px-4 focus:outline-none focus:ring-2 focus:ring-brand-pink/20 transition-all text-[15px] font-bold"
                   />
@@ -194,11 +220,11 @@ export const ResizeImageTool: React.FC = () => {
               </label>
               
               <button 
-                onClick={resizeImage}
+                onClick={resizeImages}
                 disabled={isProcessing || width <= 0 || height <= 0}
                 className="w-full h-[52px] bg-brand-pink text-white rounded-[12px] font-bold text-[15px] shadow-lg shadow-brand-pink/20 active:scale-[0.98] transition-all flex justify-center items-center gap-2 mt-2"
               >
-                {isProcessing ? 'Adjusting dimensions...' : 'Resize Image Now'}
+                {isProcessing ? 'Adjusting dimensions...' : files.length > 1 ? 'Resize All Images Now' : 'Resize Image Now'}
               </button>
             </div>
           )}
@@ -208,28 +234,28 @@ export const ResizeImageTool: React.FC = () => {
       {/* TOOL GUIDE SECTION */}
       <ToolGuide 
         toolName="Resize Image"
-        description="Change your photo dimensions with high-quality scaling. Maintain aspect ratio to prevent distortion or stretching."
+        description="Change your photo dimensions with high-quality scaling. Maintain aspect ratio to prevent distortion or stretching. Now supports batch processing!"
         steps={[
-          "Select the image you want to resize.",
+          "Select single or multiple images you want to resize.",
           "Enter your preferred width or height in pixels.",
           "Toggle 'Lock Aspect Ratio' to keep the scale consistent.",
-          "Process and download your resized image instantly."
+          "Process and download your resized image(s) instantly."
         ]}
         useCases={[
           "Creating exact size thumbnails for web design.",
-          "Resizing photos for exam application portals.",
+          "Batch resizing photos for email or application portals.",
           "Scaling down high-res images for faster sharing.",
           "Adjusting dimensions for social media banners."
         ]}
         example={{
           input: "Original_4000x3000.png",
-          output: "Resized_1024x768.png"
+          output: "Resized_1024x768.png (or .zip for batch)"
         }}
         seoContent="Resize image online free and get the perfect dimensions with WorQ-Ai. This is the simplest way to resize image without losing quality, built for fast resize image on mobile. Use our secure resize image tool to handle your photos privately on your device. Scaling images has never been faster or easier."
         faqs={[
           { q: "Does it stretch the image?", a: "No, if you keep 'Lock Aspect Ratio' enabled, the proportions will remain perfect." },
           { q: "Is there a maximum dimension?", a: "Most mobile browsers support up to 6000px, but 2000px-3000px is recommended." },
-          { q: "What format will it be saved in?", a: "It saves in the same format you uploaded (JPG or PNG)." }
+          { q: "Can I resize multiple images at once?", a: "Yes, you can select up to 20 images at once and apply the same target width and height to all of them, which will be exported as a ZIP file." }
         ]}
       />
     </div>

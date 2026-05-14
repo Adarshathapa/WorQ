@@ -5,6 +5,9 @@ import { FileUploader } from '../ui/FileUploader';
 import { MdCrop, MdDownload, MdRefresh, MdRotateRight } from 'react-icons/md';
 import { useFileManager } from '../../hooks/useFileManager';
 import { ToolGuide } from '../ui/ToolGuide';
+import { ProcessingProgressBar } from '../ui/ProcessingProgressBar';
+import { ProcessingResult } from '../ui/ProcessingResult';
+import { useProcessingSuccess } from '../../hooks/useProcessingSuccess';
 
 export const CropRotateTool: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -19,6 +22,18 @@ export const CropRotateTool: React.FC = () => {
   const [resultFileName, setResultFileName] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const { saveFile } = useFileManager();
+
+  const handleDownload = () => {
+    if (!outputUrl) return;
+    const a = document.createElement('a');
+    a.href = outputUrl;
+    a.download = resultFileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const { resultRef } = useProcessingSuccess(outputUrl, resultFileName, handleDownload);
 
   const handleFiles = (files: File[]) => {
     if (files && files.length > 0) {
@@ -123,47 +138,21 @@ export const CropRotateTool: React.FC = () => {
     }
   };
 
-  const handleDownload = () => {
-    if (!outputUrl) return;
-    const a = document.createElement('a');
-    a.href = outputUrl;
-    a.download = resultFileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
-
   return (
     <div className="flex flex-col gap-4 w-full animate-in fade-in duration-300">
       
       {outputUrl ? (
-        <div className="flex flex-col items-center py-4 animate-in zoom-in-95 duration-300 text-center">
-          <div className="w-[64px] h-[64px] rounded-full bg-green-500/10 text-green-500 flex items-center justify-center mb-4">
-            <MdCrop size={32} />
-          </div>
-          <h3 className="text-[18px] font-bold text-[#111827] dark:text-gray-100 mb-1 font-display tracking-tight">Image Ready!</h3>
-          <p className="text-[13px] text-[#6B7280] dark:text-gray-400 mb-6 font-medium px-4 leading-relaxed">Adjustments applied successfully.</p>
-          
-          <div className="mb-6 rounded-[20px] overflow-hidden border border-[#E5E7EB] dark:border-slate-800 relative flex justify-center bg-[#F8F9FC] dark:bg-slate-900 p-2 min-h-[160px] w-full">
+        <ProcessingResult 
+          resultRef={resultRef}
+          onDownload={handleDownload}
+          onReset={() => { setFile(null); setImgSrc(''); setOutputUrl(null); }}
+          title="Image Ready!"
+          description="Adjustments applied successfully."
+        >
+          <div className="mb-6 rounded-[20px] overflow-hidden border border-[#E5E7EB] dark:border-slate-800 relative flex justify-center bg-[#F8F9FC] dark:bg-slate-900 p-2 min-h-[160px] w-full mt-4">
             <img src={outputUrl} alt="Result" className="max-w-full h-auto object-contain max-h-[220px] rounded-lg" />
           </div>
-
-          <div className="flex flex-col gap-3 w-full">
-            <button
-              onClick={handleDownload}
-              className="w-full h-[48px] bg-brand-pink text-white rounded-[12px] font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-pink/20 active:scale-95 transition-all text-[15px]"
-            >
-              <MdDownload size={20} /> Download Image
-            </button>
-            <button 
-              onClick={() => { setFile(null); setImgSrc(''); setOutputUrl(null); }}
-              className="w-full h-[48px] bg-brand-light text-brand-pink rounded-[12px] font-bold active:scale-95 transition-all text-[14px]"
-            >
-              Edit Another
-            </button>
-          </div>
-        </div>
+        </ProcessingResult>
       ) : (
         <div className="flex flex-col gap-4">
           {!imgSrc ? (
@@ -209,10 +198,12 @@ export const CropRotateTool: React.FC = () => {
                 </ReactCrop>
               </div>
               
+              <ProcessingProgressBar isProcessing={isProcessing} text="Saving adjustments..." durationMs={1000} />
+
               <button 
                 onClick={getCroppedImg}
                 disabled={isProcessing}
-                className="w-full h-[52px] bg-brand-pink text-white rounded-[12px] font-bold text-[15px] shadow-lg shadow-brand-pink/20 active:scale-[0.98] transition-all flex justify-center items-center gap-2 mt-2"
+                className={`w-full h-[52px] ${isProcessing ? 'bg-gray-100 dark:bg-slate-800 text-gray-400' : 'bg-brand-pink text-white shadow-lg shadow-brand-pink/20 active:scale-[0.98]'} rounded-[12px] font-bold text-[15px] transition-all flex justify-center items-center gap-2 mt-2`}
               >
                 {isProcessing ? 'Saving adjustments...' : 'Apply & Save Image'}
               </button>

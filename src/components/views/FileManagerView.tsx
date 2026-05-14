@@ -3,7 +3,6 @@ import { Trash2, Download, Archive, File as FileIcon, Image as ImageIcon, FileTe
 import { useFileManager } from '../../hooks/useFileManager';
 import { FileItem } from '../../types';
 import { ToolGuide } from '../ui/ToolGuide';
-import { AdPlaceholder } from '../ui/AdPlaceholder';
 
 export const FileManagerView: React.FC = () => {
   const { files, deleteFile, clearAllFiles, getFileData } = useFileManager();
@@ -147,8 +146,6 @@ export const FileManagerView: React.FC = () => {
           ))
         )}
       </div>
-
-      <AdPlaceholder id={4} />
 
       {previewUrl && selectedFile && (
         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex flex-col animate-in fade-in duration-300">

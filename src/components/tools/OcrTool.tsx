@@ -81,6 +81,7 @@ export const OcrTool: React.FC = () => {
     a.click();
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+    import('../../utils/adRedirect').then(m => m.openSmartLinkAd());
   };
 
   return (

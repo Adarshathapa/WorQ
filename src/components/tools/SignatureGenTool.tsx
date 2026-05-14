@@ -3,6 +3,7 @@ import SignatureCanvas from 'react-signature-canvas';
 import { MdDraw, MdTextFields, MdUndo, MdClear, MdCheck, MdStars, MdInfo, MdFileDownload, MdAspectRatio, MdLock } from 'react-icons/md';
 import { useFileManager } from '../../hooks/useFileManager';
 import { ToolGuide } from '../ui/ToolGuide';
+import { ProcessingProgressBar } from '../ui/ProcessingProgressBar';
 
 type TabMode = 'draw' | 'type';
 
@@ -67,9 +68,31 @@ export const SignatureGenTool: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { saveFile } = useFileManager();
 
+  const resizeCanvas = () => {
+    if (sigCanvas.current) {
+      const canvas = sigCanvas.current.getCanvas();
+      const parent = canvas.parentElement;
+      if (parent) {
+        // Save data if present
+        const data = sigCanvas.current.toData();
+        canvas.width = parent.offsetWidth;
+        canvas.height = parent.offsetHeight;
+        sigCanvas.current.clear();
+        if (data && data.length > 0) {
+          sigCanvas.current.fromData(data);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     if (activeTab === 'type' && nameInputRef.current) {
       nameInputRef.current.focus();
+    }
+    if (activeTab === 'draw') {
+      window.addEventListener('resize', resizeCanvas);
+      setTimeout(resizeCanvas, 50); // allow DOM to settle
+      return () => window.removeEventListener('resize', resizeCanvas);
     }
   }, [activeTab]);
 
@@ -127,6 +150,8 @@ export const SignatureGenTool: React.FC = () => {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+      
+      import('../../utils/adRedirect').then(m => m.openSmartLinkAd());
     } catch (e) {
       console.error(e);
     } finally {
@@ -193,6 +218,8 @@ export const SignatureGenTool: React.FC = () => {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        
+        import('../../utils/adRedirect').then(m => m.openSmartLinkAd());
       }
     } finally {
       setIsProcessing(false);
@@ -282,11 +309,11 @@ export const SignatureGenTool: React.FC = () => {
           <div className="flex flex-col gap-4 animate-in fade-in duration-300">
              <div>
               <label className="text-[14px] font-bold text-[#111827] dark:text-gray-200 mb-2 block px-1">Signature Area</label>
-              <div className="bg-[#F8F9FC] dark:bg-slate-900 border-2 border-dashed border-[#E5E7EB] dark:border-slate-800 rounded-[16px] h-[180px] overflow-hidden relative touch-none shadow-inner">
+              <div className="bg-[#F8F9FC] dark:bg-slate-900 border-2 border-dashed border-[#E5E7EB] dark:border-slate-800 rounded-[16px] h-[180px] overflow-hidden relative touch-none shadow-inner w-full">
                   <SignatureCanvas 
                     ref={sigCanvas} 
                     penColor={color}
-                    canvasProps={{ className: 'w-full h-full' }} 
+                    canvasProps={{ className: 'w-full h-full absolute inset-0' }} 
                     minWidth={strokeWidth / 2}
                     maxWidth={strokeWidth * 1.5}
                     clearOnResize={false}
@@ -326,21 +353,33 @@ export const SignatureGenTool: React.FC = () => {
 
       {/* ACTION BUTTONS */}
       <div className="flex flex-col gap-3 mt-2">
+      
+        <ProcessingProgressBar isProcessing={isProcessing} text="Optimizing signature..." durationMs={1000} />
+      
         <button 
            onClick={handleDownloadPng}
            disabled={isProcessing}
-           className="w-full h-[52px] bg-brand-pink text-white rounded-[12px] font-bold text-[15px] shadow-lg shadow-brand-pink/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+           className={`w-full h-[52px] ${isProcessing ? 'bg-gray-100 dark:bg-slate-800 text-gray-400' : 'bg-brand-pink text-white shadow-lg shadow-brand-pink/20 active:scale-[0.98]'} rounded-[12px] font-bold text-[15px] transition-all flex items-center justify-center gap-2`}
         >
            <MdFileDownload size={22} /> Download PNG
         </button>
 
         {!resizeImageSource ? (
-           <button 
-             onClick={handleUseCreatedSignature}
-             className="w-full h-[48px] bg-brand-light text-brand-pink border border-brand-pink/10 rounded-[12px] font-bold text-[14px] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-           >
-             <MdAspectRatio size={20} /> Resize for Govt Exams
-           </button>
+           <div className="flex gap-3">
+             <button 
+               onClick={handleUseCreatedSignature}
+               className="flex-1 h-[48px] bg-brand-light text-brand-pink border border-brand-pink/10 rounded-[12px] font-bold text-[14px] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+             >
+               <MdAspectRatio size={20} /> Resize Current
+             </button>
+             <button 
+               onClick={() => fileInputRef.current?.click()}
+               className="flex-1 h-[48px] bg-white dark:bg-slate-800 text-[#111827] dark:text-white border border-gray-200 dark:border-slate-700 rounded-[12px] font-bold text-[14px] active:scale-[0.98] transition-all flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-slate-700"
+             >
+               Upload Photo
+             </button>
+             <input type="file" hidden ref={fileInputRef} onChange={handleFileUpload} accept="image/*" />
+           </div>
         ) : (
           <div className="bg-white dark:bg-slate-800 rounded-[16px] p-4 shadow-xl border border-[#FFE4EA] dark:border-slate-800 animate-in slide-in-from-bottom-2 duration-300">
             <div className="flex items-center justify-between mb-4">

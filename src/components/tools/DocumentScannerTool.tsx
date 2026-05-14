@@ -16,6 +16,8 @@ import { createWorker } from 'tesseract.js';
 import { FileUploader } from '../ui/FileUploader';
 import { useFileManager } from '../../hooks/useFileManager';
 import { ToolGuide } from '../ui/ToolGuide';
+import { ProcessingResult } from '../ui/ProcessingResult';
+import { useProcessingSuccess } from '../../hooks/useProcessingSuccess';
 
 interface ScannedPage {
   id: string;
@@ -145,33 +147,19 @@ export const DocumentScannerTool: React.FC = () => {
     document.body.removeChild(a);
   };
 
+  const { resultRef } = useProcessingSuccess(outputUrl, resultFileName, handleDownload);
 
   return (
     <div className="flex flex-col gap-4 w-full animate-in fade-in duration-300">
       
       {outputUrl ? (
-        <div className="flex flex-col items-center py-4 animate-in zoom-in-95 duration-300 text-center">
-          <div className="w-[64px] h-[64px] rounded-full bg-green-500/10 text-green-500 flex items-center justify-center mb-4">
-            <MdCheck size={32} />
-          </div>
-          <h3 className="text-[18px] font-bold text-[#111827] dark:text-gray-100 mb-1 font-display tracking-tight">Document Scanned!</h3>
-          <p className="text-[13px] text-[#6B7280] dark:text-gray-400 mb-8 font-medium">Your scan is processed and ready.</p>
-          
-          <div className="flex flex-col gap-3 w-full">
-            <button
-              onClick={handleDownload}
-              className="w-full h-[48px] bg-brand-pink text-white rounded-[12px] font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-pink/20 active:scale-95 transition-all text-[15px]"
-            >
-              <MdDownload size={20} /> Download PDF
-            </button>
-            <button 
-              onClick={() => { setPages([]); setOutputUrl(null); }}
-              className="w-full h-[48px] bg-brand-light text-brand-pink rounded-[12px] font-bold active:scale-95 transition-all text-[14px]"
-            >
-              Scan New Document
-            </button>
-          </div>
-        </div>
+        <ProcessingResult 
+          resultRef={resultRef}
+          onDownload={handleDownload}
+          onReset={() => { setPages([]); setOutputUrl(null); }}
+          title="Document Scanned!"
+          description="Your scan is processed and ready."
+        />
       ) : pages.length === 0 ? (
         <div className="flex flex-col gap-4">
            <FileUploader 

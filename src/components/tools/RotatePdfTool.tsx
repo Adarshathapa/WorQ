@@ -4,6 +4,9 @@ import { FileUploader } from '../ui/FileUploader';
 import { MdInsertDriveFile, MdRotateRight, MdDownload, MdRefresh } from 'react-icons/md';
 import { useFileManager } from '../../hooks/useFileManager';
 import { ToolGuide } from '../ui/ToolGuide';
+import { ProcessingProgressBar } from '../ui/ProcessingProgressBar';
+import { ProcessingResult } from '../ui/ProcessingResult';
+import { useProcessingSuccess } from '../../hooks/useProcessingSuccess';
 
 export const RotatePdfTool: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -12,6 +15,18 @@ export const RotatePdfTool: React.FC = () => {
   const [resultFileName, setResultFileName] = useState('');
   const [rotation, setRotation] = useState<number>(90);
   const { saveFile } = useFileManager();
+
+  const handleDownload = () => {
+    if (!outputUrl) return;
+    const a = document.createElement('a');
+    a.href = outputUrl;
+    a.download = resultFileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const { resultRef } = useProcessingSuccess(outputUrl, resultFileName, handleDownload);
 
   const handleFiles = async (files: File[]) => {
     if (files.length > 0) {
@@ -56,43 +71,17 @@ export const RotatePdfTool: React.FC = () => {
     }
   };
 
-  const handleDownload = () => {
-    if (!outputUrl) return;
-    const a = document.createElement('a');
-    a.href = outputUrl;
-    a.download = resultFileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
-
   return (
     <div className="flex flex-col gap-4 w-full animate-in fade-in duration-300">
       
       {outputUrl ? (
-        <div className="flex flex-col items-center py-4 animate-in zoom-in-95 duration-300 text-center">
-          <div className="w-[64px] h-[64px] rounded-full bg-green-500/10 text-green-500 flex items-center justify-center mb-4">
-            <MdRotateRight size={32} />
-          </div>
-          <h3 className="text-[18px] font-bold text-[#111827] dark:text-gray-100 mb-1 font-display tracking-tight">PDF Rotated!</h3>
-          <p className="text-[13px] text-[#6B7280] dark:text-gray-400 mb-8 font-medium">All pages have been adjusted by {rotation}°.</p>
-          
-          <div className="flex flex-col gap-3 w-full">
-            <button
-              onClick={handleDownload}
-              className="w-full h-[48px] bg-brand-pink text-white rounded-[12px] font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-pink/20 active:scale-95 transition-all"
-            >
-              <MdDownload size={20} /> Download PDF
-            </button>
-            <button 
-              onClick={() => { setFile(null); setOutputUrl(null); }}
-              className="w-full h-[48px] bg-brand-light text-brand-pink rounded-[12px] font-bold active:scale-95 transition-all text-[14px]"
-            >
-              Rotate Another
-            </button>
-          </div>
-        </div>
+        <ProcessingResult 
+          resultRef={resultRef}
+          onDownload={handleDownload}
+          onReset={() => { setFile(null); setOutputUrl(null); }}
+          title="PDF Rotated!"
+          description={`All pages have been adjusted by ${rotation}°.`}
+        />
       ) : (
         <div className="flex flex-col gap-4">
           {!file ? (
@@ -139,10 +128,12 @@ export const RotatePdfTool: React.FC = () => {
                 </div>
               </div>
               
+              <ProcessingProgressBar isProcessing={isProcessing} text="Aligning pages..." durationMs={1000} />
+              
               <button 
                 onClick={rotatePDF}
                 disabled={isProcessing}
-                className="w-full h-[52px] bg-brand-pink text-white rounded-[12px] font-bold text-[15px] shadow-lg shadow-brand-pink/20 active:scale-[0.98] transition-all flex justify-center items-center gap-2 mt-2"
+                className={`w-full h-[52px] ${isProcessing ? 'bg-gray-100 dark:bg-slate-800 text-gray-400' : 'bg-brand-pink text-white shadow-lg shadow-brand-pink/20 active:scale-[0.98]'} rounded-[12px] font-bold text-[15px] transition-all flex justify-center items-center gap-2 mt-2`}
               >
                 {isProcessing ? 'Aligning pages...' : 'Rotate PDF Now'}
               </button>

@@ -43,6 +43,26 @@ export const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:title" content={siteTitle} />
       <meta name="twitter:description" content={siteDescription} />
       <meta name="twitter:image" content={image} />
+
+      {/* JSON-LD Schemas for Site Branding */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "WorQ-AI",
+          "alternateName": ["WorQ AI", "Worq AI"],
+          "url": "https://worq-ai.in/"
+        })}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "WorQ-AI",
+          "url": "https://worq-ai.in/",
+          "logo": "https://worq-ai.in/logo.png"
+        })}
+      </script>
     </Helmet>
   );
 };

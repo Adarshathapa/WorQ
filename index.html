@@ -2,18 +2,52 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Defensive check for fetch to prevent property overwrite errors from external scripts
+      (function() {
+        try {
+          var originalFetch = window.fetch;
+          var currentFetch = originalFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() { return currentFetch; },
+            set: function(v) { currentFetch = v; },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {}
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="/my-favicon/favicon-96x96.png?v=20260501" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/my-favicon/favicon.svg?v=20260501" />
+    <link rel="shortcut icon" href="/my-favicon/favicon.ico?v=20260501" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/my-favicon/apple-touch-icon.png?v=20260501" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Pacifico&family=Satisfy&family=Qwitcher+Grypen:wght@400;700&family=Marck+Script&display=swap" rel="stylesheet">
     <title>Free PDF Tools Online | WorQ-AI</title>
     <meta name="description" content="All-in-one free PDF tools. Merge, compress, convert PDFs online. Fast and secure." />
-    <link rel="canonical" href="https://worq-ai.in/" />
     <meta name="keywords" content="pdf tools, merge pdf, compress pdf, image compressor, background remover, pdf converter, file tools, scanner" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Free PDF Tools Online | WorQ-AI" />
-    <meta property="og:description" content="All-in-one free PDF tools. Merge, compress, convert PDFs online. Fast and secure." />
     <meta property="og:site_name" content="WorQ-AI" />
-    <meta property="og:url" content="https://worq-ai.in/" />
     <meta name="twitter:card" content="summary_large_image" />
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "WorQ-AI",
+      "alternateName": ["WorQ AI", "Worq AI"],
+      "url": "https://worq-ai.in/"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "WorQ-AI",
+      "url": "https://worq-ai.in/",
+      "logo": "https://worq-ai.in/logo.png"
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

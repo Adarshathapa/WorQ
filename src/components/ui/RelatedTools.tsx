@@ -48,26 +48,26 @@ export const RelatedTools: React.FC<RelatedToolsProps> = ({ currentToolId, onToo
   if (relatedTools.length === 0) return null;
 
   return (
-    <div className="mt-8 pt-6 border-t border-gray-200 dark:border-slate-800 animate-in fade-in duration-300">
-      <div className="mb-5 px-1">
-        <h3 className="text-[18px] md:text-[20px] text-[#111827] dark:text-gray-100 font-display font-semibold tracking-tight">Other Tools</h3>
-        <p className="text-[13px] md:text-[14px] text-[#6B7280] dark:text-gray-400 mt-0.5">Explore additional tools you might like</p>
+    <div className="animate-in fade-in duration-300">
+      <div className="mb-6 sm:mb-8 text-center sm:text-left px-2 sm:px-0">
+        <h3 className="text-[24px] sm:text-[32px] text-[#111827] font-display font-black tracking-tight">Tools you might like</h3>
+        <p className="text-[15px] sm:text-[18px] text-[#6B7280] font-medium mt-1.5">Continue your workflow with these related tools.</p>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {relatedTools.slice(0,4).map(tool => (
           <button
             key={tool.id}
             onClick={() => onToolSelect(tool)}
-            className="flex flex-col p-4 bg-white dark:bg-slate-800/80 rounded-[16px] border border-[#E5E7EB] dark:border-slate-700 shadow-sm active:scale-[0.98] hover:shadow-md hover:-translate-y-1 hover:border-brand-pink/30 dark:hover:border-brand-pink/50 transition-all duration-300 ease-out text-left group"
+            className="flex flex-col p-5 sm:p-6 bg-white rounded-[24px] sm:rounded-[28px] border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] active:scale-[0.98] hover:shadow-[0_12px_40px_rgba(255,138,61,0.08)] hover:-translate-y-1 hover:border-[#FF8A3D]/30 transition-all duration-300 ease-out text-left group"
           >
-            <div className="w-[44px] h-[44px] rounded-[12px] bg-brand-light dark:bg-brand-pink/10 flex items-center justify-center text-brand-pink flex-shrink-0 mb-3 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-              <Icon name={tool.iconName} size={22} />
+            <div className="w-[48px] h-[48px] sm:w-[56px] sm:h-[56px] rounded-[16px] bg-[#FFF4ED] border border-[#FFE4D6] flex items-center justify-center text-[#FF8A3D] flex-shrink-0 mb-4 sm:mb-5 group-hover:scale-110 shadow-sm transition-transform duration-300">
+              <Icon name={tool.iconName} size={24} />
             </div>
-            <span className="text-[14px] md:text-[15px] font-semibold text-[#111827] dark:text-gray-100 leading-tight">
+            <span className="text-[15px] sm:text-[18px] font-black text-[#111827] leading-tight font-display tracking-tight group-hover:text-[#FF8A3D] transition-colors">
               {tool.name}
             </span>
-            <span className="text-[12px] md:text-[13px] text-[#6B7280] dark:text-gray-400 mt-1 line-clamp-2 md:line-clamp-3 leading-relaxed hidden md:block">
+            <span className="text-[13px] sm:text-[14px] text-[#6B7280] mt-1.5 line-clamp-2 md:line-clamp-3 leading-relaxed font-medium">
               {tool.description}
             </span>
           </button>

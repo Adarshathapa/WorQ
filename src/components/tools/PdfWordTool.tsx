@@ -3,6 +3,8 @@ import { MdDescription, MdDownload, MdCheck, MdArrowForward } from 'react-icons/
 import { FileUploader } from '../ui/FileUploader';
 import { ToolGuide } from '../ui/ToolGuide';
 import { useFileManager } from '../../hooks/useFileManager';
+import { ProcessingResult } from '../ui/ProcessingResult';
+import { useProcessingSuccess } from '../../hooks/useProcessingSuccess';
 
 export const PdfWordTool: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -10,6 +12,18 @@ export const PdfWordTool: React.FC = () => {
   const [outputUrl, setOutputUrl] = useState<string | null>(null);
   const [resultFileName, setResultFileName] = useState('');
   const { saveFile } = useFileManager();
+
+  const handleDownload = () => {
+    if (!outputUrl) return;
+    const a = document.createElement('a');
+    a.href = outputUrl;
+    a.download = resultFileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const { resultRef } = useProcessingSuccess(outputUrl, resultFileName, handleDownload);
 
   const handleFiles = (files: File[]) => {
     if (files.length > 0) {
@@ -22,9 +36,9 @@ export const PdfWordTool: React.FC = () => {
     if (!file) return;
     setIsProcessing(true);
     try {
-      // Create a dummy docx content (just a plain text file with .docx extension for simulator)
-      const content = `WorQ-Ai PDF to Word Conversion\n\nOriginal File: ${file.name}\nTimestamp: ${new Date().toLocaleString()}\n\nThis is a placeholder for the extracted text. Real high-fidelity extraction is complex in-browser and is being improved daily.`;
-      const blob = new Blob([content], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      const { convertFileToBlob } = await import('../../utils/fileConversionHelper');
+      const { blob } = await convertFileToBlob(file, 'docx');
+      
       const url = URL.createObjectURL(blob);
       const fileName = `${file.name.split('.')[0]}_editable.docx`;
       
@@ -45,41 +59,16 @@ export const PdfWordTool: React.FC = () => {
     }
   };
 
-  const handleDownload = () => {
-    if (!outputUrl) return;
-    const a = document.createElement('a');
-    a.href = outputUrl;
-    a.download = resultFileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
   return (
     <div className="flex flex-col gap-4 w-full animate-in fade-in duration-300">
       {outputUrl ? (
-        <div className="flex flex-col items-center py-4 animate-in zoom-in-95 duration-300 text-center">
-          <div className="w-[64px] h-[64px] rounded-full bg-green-500/10 text-green-500 flex items-center justify-center mb-4">
-            <MdCheck size={32} />
-          </div>
-          <h3 className="text-[18px] font-bold text-[#111827] dark:text-white mb-1 font-display tracking-tight">Word File Ready!</h3>
-          <p className="text-[13px] text-[#6B7280] dark:text-gray-400 mb-8 font-medium">Your PDF has been converted to an editable format.</p>
-          
-          <div className="flex flex-col gap-3 w-full">
-            <button
-              onClick={handleDownload}
-              className="w-full h-[48px] bg-brand-pink text-white rounded-[12px] font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-pink/20 active:scale-95 transition-all text-[15px]"
-            >
-              <MdDownload size={20} /> Download Word Doc
-            </button>
-            <button 
-              onClick={() => { setFile(null); setOutputUrl(null); }}
-              className="w-full h-[48px] bg-brand-light text-brand-pink rounded-[12px] font-bold active:scale-95 transition-all text-[14px]"
-            >
-              Convert Another
-            </button>
-          </div>
-        </div>
+        <ProcessingResult 
+          resultRef={resultRef}
+          onDownload={handleDownload}
+          onReset={() => { setFile(null); setOutputUrl(null); }}
+          title="Word File Ready!"
+          description="Your PDF has been converted to an editable format."
+        />
       ) : (
         <div className="flex flex-col gap-4">
           {!file ? (

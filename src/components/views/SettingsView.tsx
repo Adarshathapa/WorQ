@@ -27,7 +27,7 @@ import { usePWA } from '../../hooks/usePWA';
 import { useFileManager } from '../../hooks/useFileManager';
 
 export const SettingsView: React.FC = () => {
-  const { isDarkMode, toggleDarkMode } = useSettings();
+  const { user, userName, login, logout, isDarkMode, toggleDarkMode } = useSettings();
   const { isInstallable, isInstalled, installPWA } = usePWA();
   const { clearAllFiles } = useFileManager();
   
@@ -57,7 +57,7 @@ export const SettingsView: React.FC = () => {
     }
 
     const message =
-`🐞 Bug Report:
+`[Bug Report]:
 
 Name: ${name}
 Tool: ${tool}
@@ -79,84 +79,61 @@ Device: ${device}`;
 
       <div className="px-4 space-y-5">
         
-        {/* BUG REPORT SECTION */}
-        <section className="bg-white dark:bg-slate-800 rounded-[14px] border border-[#E5E7EB] dark:border-slate-700 shadow-sm w-full overflow-hidden">
-          <button 
-            type="button"
-            onClick={() => setIsBugReportOpen(!isBugReportOpen)}
-            className="w-full flex items-center justify-between p-4 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[12px] bg-brand-light dark:bg-brand-pink/10 flex items-center justify-center text-brand-pink">
-                <MdBugReport size={20} />
-              </div>
-              <div className="text-left">
-                <h2 className="text-[15px] font-medium text-[#111827] dark:text-white">Report a Bug</h2>
-                <p className="text-[12px] text-[#6B7280] dark:text-gray-400">Found an issue? Help us fix it quickly.</p>
-              </div>
-            </div>
-            {isBugReportOpen ? (
-              <MdExpandLess className="text-[#6B7280]" size={24} />
-            ) : (
-              <MdExpandMore className="text-[#6B7280]" size={24} />
-            )}
-          </button>
-
-          <AnimatePresence>
-            {isBugReportOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="p-4 pt-0 border-t border-gray-100 dark:border-slate-700 mt-2">
-                  <form id="bugForm" onSubmit={handleBugReport} className="flex flex-col gap-3 mt-4">
-                    <input 
-                      name="name" 
-                      type="text" 
-                      placeholder="Your Name (optional)" 
-                      className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-[14px] text-[#111827] dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-pink/20"
-                    />
-
-                    <input 
-                      name="tool" 
-                      type="text" 
-                      defaultValue={document.title}
-                      placeholder="Tool name (e.g. Merge PDF)" 
-                      required 
-                      className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-[14px] text-[#111827] dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-pink/20"
-                    />
-
-                    <textarea 
-                      name="description" 
-                      placeholder="Describe the issue clearly..." 
-                      required 
-                      className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-[14px] text-[#111827] dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-pink/20 min-h-[100px] resize-y"
-                    ></textarea>
-
-                    <input 
-                      name="device" 
-                      type="text" 
-                      placeholder="Device / Browser (optional)" 
-                      className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-[14px] text-[#111827] dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-pink/20"
-                    />
-
-                    <button 
-                      type="submit"
-                      className="w-full py-3.5 rounded-xl bg-[#ff4d6d] text-white font-semibold text-[14px] hover:-translate-y-0.5 active:scale-95 transition-all outline-none mt-2"
-                    >
-                      Submit Bug
-                    </button>
-                  </form>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </section>
-
         {/* SETTINGS LISTS */}
         <div className="space-y-6">
+          {/* Account */}
+          <div>
+            <h3 className="text-[12px] font-bold text-[#6B7280] dark:text-gray-500 uppercase tracking-wider mb-2 px-1">Account Sync</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-[#E5E7EB] dark:border-slate-700 overflow-hidden divide-y divide-[#F8F9FC] dark:divide-slate-700/50">
+              
+              {!user ? (
+                <div className="p-4 flex flex-col items-center justify-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-500 mb-1">
+                    <MdPerson size={24} />
+                  </div>
+                  <div className="text-center">
+                    <h3 className="text-[15px] font-bold text-[#111827] dark:text-white">Cloud Backup & Sync</h3>
+                    <p className="text-[13px] text-[#6B7280] dark:text-gray-400 mt-1 mb-3">Log in to sync your processed files and settings across devices securely.</p>
+                  </div>
+                  <button 
+                    onClick={login}
+                    className="w-full h-11 bg-brand-pink text-white rounded-xl font-bold text-[14px] active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
+                  >
+                    Continue with Google
+                  </button>
+                </div>
+              ) : (
+                <div className="p-4 flex flex-col gap-4">
+                   <div className="flex items-center gap-3">
+                     <div className="w-12 h-12 bg-brand-light dark:bg-brand-pink/10 rounded-full flex items-center justify-center text-brand-pink font-bold text-lg">
+                       {userName?.[0]?.toUpperCase() || <MdPerson size={24} />}
+                     </div>
+                     <div className="flex-1 min-w-0">
+                       <h3 className="text-[15px] font-bold text-[#111827] dark:text-white truncate">{userName || 'User'}</h3>
+                       <p className="text-[13px] text-[#6B7280] dark:text-gray-400 truncate">{user.email}</p>
+                     </div>
+                   </div>
+                   
+                   <div className="flex items-center justify-between text-[12px] text-green-600 dark:text-green-400 font-medium bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-lg">
+                     <div className="flex items-center gap-1.5">
+                       <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                       Sync Active
+                     </div>
+                     <span>All changes are saved to cloud</span>
+                   </div>
+                   
+                   <button 
+                     onClick={logout}
+                     className="w-full flex items-center justify-center gap-2 h-10 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-[14px] hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
+                   >
+                     <MdLogout size={18} />
+                     Sign Out
+                   </button>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Appearance */}
           <div>
             <h3 className="text-[12px] font-bold text-[#6B7280] dark:text-gray-500 uppercase tracking-wider mb-2 px-1">Appearance</h3>
@@ -257,7 +234,7 @@ Device: ${device}`;
             </a>
 
             <div className="flex items-center justify-center gap-1.5 text-[#6B7280] dark:text-gray-500 text-[11px] font-medium border-t border-[#F8F9FC] dark:border-slate-700 pt-3">
-              <span className="w-4 h-4 rounded-full bg-brand-light dark:bg-brand-pink/10 text-brand-pink flex items-center justify-center text-[10px]">✓</span>
+              <span className="w-4 h-4 rounded-full bg-brand-light dark:bg-brand-pink/10 text-brand-pink flex items-center justify-center text-[10px]">&check;</span>
               <span>Secure one-time contribution via UPI</span>
             </div>
           </section>
@@ -435,7 +412,7 @@ Device: ${device}`;
                     <p className="text-[15px] leading-relaxed">All processing happens on your device. Your files are not uploaded to any server.</p>
                     <div className="pt-6 border-t border-[#F8F9FC] dark:border-slate-700/50">
                       <p className="font-bold text-[#111827] dark:text-white">Version: 1.1</p>
-                      <p className="text-[#6B7280] dark:text-gray-400">Built with ❤️ by Adarsh</p>
+                      <p className="text-[#6B7280] dark:text-gray-400 flex items-center gap-1">Built with <MdFavorite className="text-red-500 w-3 h-3" /> by Adarsh</p>
                     </div>
                   </div>
                 )}

@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MdClose } from 'react-icons/md';
+import { FileStack, ShieldCheck, Globe, ChevronDown, CheckCircle2, ChevronRight, Shield, Zap, AppWindow, Users } from 'lucide-react';
+import { Icon } from './Icon';
 
 export const Footer: React.FC = () => {
-  const [activeLayer, setActiveLayer] = useState<'privacy' | 'terms' | 'disclaimer' | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const navigate = (path: string) => {
     if (window.location.pathname !== path) {
@@ -13,124 +15,161 @@ export const Footer: React.FC = () => {
     }
   };
 
-  const legalContent = {
-    privacy: {
-      title: 'Privacy Policy',
-      content: 'Your privacy is important to us. WorQ-Ai processes all files locally on your device. We do not upload, store, or share your personal data or files with any external servers. Any data processed remains in your browser session and is deleted when you close the app or clear your history.'
-    },
-    terms: {
-      title: 'Terms & Conditions',
-      content: 'By using WorQ-Ai, you agree that the service is provided "as is" without any warranties. We are not responsible for any data loss or issues arising from the use of our local file processing tools. You retain all rights to your content.'
-    },
-    disclaimer: {
-      title: 'Disclaimer',
-      content: 'WorQ-Ai is a client-side utility tool. While we use industry-standard libraries for file processing, results may vary. Always keep backups of your original files. We are not affiliated with any third-party services mentioned unless explicitly stated.'
+  const handleLink = (type: string, path?: string) => {
+    if (path) {
+      navigate(path);
+    } else {
+      setToastMsg(`${type} is coming soon!`);
     }
   };
 
+  useEffect(() => {
+    if (toastMsg) {
+      const timer = setTimeout(() => setToastMsg(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMsg]);
+
   return (
-    <footer className="mt-12 w-full border-t border-[#EEF0F5] dark:border-slate-800 bg-[#F8F9FC] dark:bg-slate-900 pb-[80px] md:pb-8 flex flex-col items-center">
-      <div className="w-full max-w-[1200px] px-6 py-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-        
-        {/* Brand Section */}
-        <div className="flex flex-col gap-3">
-          <div 
-            className="flex items-center gap-2 cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
-            onClick={() => navigate('/')}
-          >
-            <div className="w-[28px] h-[28px] rounded-lg bg-linear-to-br from-[#FF2D55] to-[#FF8A3D] flex items-center justify-center shadow-md">
-              <span className="text-[16px] font-black text-white leading-none font-display">W</span>
-            </div>
-            <h1 className="text-[20px] text-[#111827] dark:text-white leading-none tracking-tight font-display flex items-baseline">
-              <span className="font-extrabold tracking-tight">WorQ</span>
-              <span className="font-light text-brand-gradient ml-[1.5px] tracking-[0.15em]">-AI</span>
-            </h1>
-          </div>
-          <p className="text-[13px] text-[#6B7280] dark:text-gray-400 max-w-[250px] leading-relaxed">
-            Fast, secure, and smart local file processing right in your browser.
-          </p>
-        </div>
-
-        {/* Links */}
-        <div className="flex flex-row gap-12 md:gap-16">
-          {/* Quick Links */}
-          <div className="flex flex-col gap-3">
-            <h4 className="text-[12px] font-bold text-[#111827] dark:text-gray-200 uppercase tracking-widest mb-1">Platform</h4>
-            <button onClick={() => navigate('/')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">Home</button>
-            <button onClick={() => navigate('/pdf-tools')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">All Tools</button>
-            <button onClick={() => navigate('/file-manager')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">My Files</button>
-          </div>
-          
-          {/* Legal / Contact */}
-          <div className="flex flex-col gap-3">
-            <h4 className="text-[12px] font-bold text-[#111827] dark:text-gray-200 uppercase tracking-widest mb-1">Legal</h4>
-            <button onClick={() => setActiveLayer('privacy')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">Privacy Policy</button>
-            <button onClick={() => setActiveLayer('terms')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">Terms of Service</button>
-            <button onClick={() => setActiveLayer('disclaimer')} className="text-[13px] font-medium text-[#6B7280] dark:text-gray-400 hover:text-brand-pink transition-colors text-left">Disclaimer</button>
-          </div>
-        </div>
-      </div>
-      
-      {/* Bottom bar */}
-      <div className="w-full max-w-[1200px] border-t border-[#EEF0F5] dark:border-slate-800 px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p className="text-[12px] text-[#9CA3AF] dark:text-gray-500 font-medium">
-          &copy; {new Date().getFullYear()} WorQ-AI. All rights reserved.
-        </p>
-        <div className="flex flex-col items-center gap-1">
-           <span className="text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest">
-             WorQ-Ai v1.1
-           </span>
-           <div className="flex items-center gap-2 text-[12px] text-[#9CA3AF] dark:text-gray-500 font-medium">
-             <span>Made with precision</span>
-             <span className="text-brand-pink">&hearts;</span>
-           </div>
-        </div>
-      </div>
-
-      {/* LEGAL MODAL */}
+    <footer className="w-full bg-white flex flex-col items-center relative overflow-hidden mt-auto border-t border-gray-100">
+      {/* Toast Notification */}
       <AnimatePresence>
-        {activeLayer && (
-          <div className="fixed inset-0 z-[200] flex items-end justify-center">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActiveLayer(null)}
-              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-            />
-            <motion.div 
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-t-[32px] p-6 pb-12 shadow-2xl overflow-hidden"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[18px] font-bold text-gray-900 dark:text-white">
-                  {legalContent[activeLayer].title}
-                </h3>
-                <button 
-                  onClick={() => setActiveLayer(null)}
-                  className="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-gray-500"
-                >
-                  <MdClose size={20} />
-                </button>
-              </div>
-              <div className="prose prose-sm dark:prose-invert">
-                <p className="text-[14px] leading-relaxed text-gray-600 dark:text-gray-400">
-                  {legalContent[activeLayer].content}
-                </p>
-              </div>
-              <button 
-                onClick={() => setActiveLayer(null)}
-                className="w-full mt-8 py-3.5 bg-gray-900 dark:bg-slate-800 text-white rounded-2xl font-bold text-[15px] active:scale-[0.98] transition-all"
-              >
-                Close
-              </button>
-            </motion.div>
-          </div>
+        {toastMsg && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-8 right-8 z-[300] bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl border border-gray-800 flex items-center gap-3 font-medium transition-all"
+          >
+            <Zap size={18} className="text-[#FF8A3D]" />
+            {toastMsg}
+          </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-[#FF8A3D]/10 via-white to-white pointer-events-none" />
+      <div className="absolute bottom-[-20%] left-[50%] -translate-x-[50%] w-[60%] h-[40%] bg-[#FF8A3D]/10 blur-[120px] rounded-[100%] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[40%] h-[1px] bg-gradient-to-r from-transparent via-[#FF8A3D]/20 to-transparent opacity-50" />
+      
+      <div className="w-full max-w-[1200px] px-5 sm:px-8 md:px-12 pt-16 sm:pt-20 pb-5 sm:pb-7 flex flex-col relative z-10">
+        
+        {/* TOP SECTION: Ad Banner */}
+        <div className="w-full mb-20 border-b border-gray-200 pb-16 relative overflow-hidden">
+          <a href="https://link.super.money/ZsgcLKVBRZb" target="_blank" rel="noopener noreferrer" className="block w-full rounded-[24px] sm:rounded-[32px] overflow-hidden group shadow-[0_12px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.02] active:scale-[0.98]">
+             <img 
+               src="https://i.ibb.co/60s14kYT/file-00000000394c720bbd0a1f5b964fe8e2.png" 
+               alt="super.money Ad" 
+               className="w-full h-auto object-cover block"
+             />
+          </a>
+        </div>
+
+        {/* MIDDLE SECTION: Links & Brand */}
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 w-full mb-16 sm:mb-20">
+          
+          {/* Brand Info */}
+          <div className="flex flex-col gap-6 lg:w-[320px]">
+            <div 
+              className="flex items-center gap-3 cursor-pointer group w-fit"
+              onClick={() => handleLink('Home', '/')}
+            >
+               <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-[#FFA568] to-[#FF7A18] flex items-center justify-center shadow-[0_4px_12px_rgba(255,138,61,0.2)] border border-[#FF8A3D]/20">
+                 <FileStack className="text-white w-5 h-5" strokeWidth={2.5} />
+               </div>
+              <h1 className="text-[24px] text-[#111827] leading-none tracking-tight font-display flex items-baseline">
+                <span className="font-extrabold tracking-tight">WorQ</span>
+                <span className="font-medium text-[#FF8A3D] ml-[1px] text-[16px] tracking-[0.08em]">-AI</span>
+              </h1>
+            </div>
+            
+            <p className="text-[14px] text-gray-500 font-medium leading-[1.6]">
+              All-in-one AI platform for documents, images & more.
+            </p>
+
+            {/* Socials */}
+            <div className="flex items-center gap-3 mt-2">
+              {['Twitter', 'Linkedin', 'Youtube', 'Github'].map((icon, i) => (
+                 <button key={i} onClick={() => handleLink(icon)} className="w-9 h-9 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#FF8A3D] hover:bg-orange-50 transition-all duration-300">
+                   <Icon name={icon} className="w-4 h-4" />
+                 </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Links Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12 flex-1">
+            {/* Column 1 */}
+            <div className="flex flex-col gap-5">
+              <h4 className="text-[14px] font-bold text-[#FF8A3D] tracking-wide">Product</h4>
+              <div className="flex flex-col gap-3">
+                <button onClick={() => handleLink('All Tools', '/tools')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">All Tools</button>
+                <button onClick={() => handleLink('AI Chat', '/ai-tools/ai-chat')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">AI Chat</button>
+                <button onClick={() => handleLink('Templates')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Templates</button>
+                <button onClick={() => handleLink('Integrations')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Integrations</button>
+                <button onClick={() => handleLink('Updates')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Updates</button>
+              </div>
+            </div>
+            
+            {/* Column 2 */}
+            <div className="flex flex-col gap-5">
+              <h4 className="text-[14px] font-bold text-[#FF8A3D] tracking-wide">Solutions</h4>
+              <div className="flex flex-col gap-3">
+                <button onClick={() => handleLink('For Teams')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">For Teams</button>
+                <button onClick={() => handleLink('For Education')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">For Education</button>
+                <button onClick={() => handleLink('For Business')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">For Business</button>
+                <button onClick={() => handleLink('Developers')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Developers</button>
+                <button onClick={() => handleLink('API')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">API</button>
+              </div>
+            </div>
+
+            {/* Column 3 */}
+            <div className="flex flex-col gap-5">
+              <h4 className="text-[14px] font-bold text-[#FF8A3D] tracking-wide">Resources</h4>
+              <div className="flex flex-col gap-3">
+                <button onClick={() => handleLink('Documentation')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Documentation</button>
+                <button onClick={() => handleLink('Guides')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Guides</button>
+                <button onClick={() => handleLink('Blog', '/blogs')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Blog</button>
+                <button onClick={() => handleLink('Help Center')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Help Center</button>
+                <button onClick={() => handleLink('Community')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Community</button>
+              </div>
+            </div>
+
+            {/* Column 4 */}
+            <div className="flex flex-col gap-5">
+              <h4 className="text-[14px] font-bold text-[#FF8A3D] tracking-wide">Company</h4>
+              <div className="flex flex-col gap-3">
+                <button onClick={() => handleLink('About Us', '/about-us')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">About Us</button>
+                <button onClick={() => handleLink('Careers')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Careers</button>
+                <button onClick={() => handleLink('Press')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Press</button>
+                <button onClick={() => handleLink('Contact')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Contact</button>
+                <button onClick={() => handleLink('Partners')} className="text-left text-[14px] text-gray-500 hover:text-[#FF8A3D] transition-colors">Partners</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* BOTTOM SECTION */}
+        <div className="w-full pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-[13px] text-gray-500 font-medium text-center md:text-left">
+            &copy; {new Date().getFullYear()} WorQ-AI. All rights reserved.
+          </p>
+          
+          <div className="flex items-center gap-6 text-[13px] text-gray-500 font-medium">
+             <button onClick={() => handleLink('Privacy Policy', '/privacy-policy')} className="hover:text-[#FF8A3D] transition-colors">Privacy Policy</button>
+             <button onClick={() => handleLink('Terms of Service', '/terms-of-service')} className="hover:text-[#FF8A3D] transition-colors">Terms of Service</button>
+             <button onClick={() => handleLink('Security', '/security')} className="hover:text-[#FF8A3D] transition-colors">Security</button>
+             
+             <button onClick={() => handleLink('Language Selection')} className="flex items-center gap-1.5 text-gray-500 hover:text-[#FF8A3D] transition-all bg-gray-50 hover:bg-orange-50 px-3 py-1.5 rounded-full border border-gray-200 ml-2">
+               <Globe size={14} className="text-current" />
+               <span>English</span>
+               <ChevronDown size={14} />
+             </button>
+          </div>
+        </div>
+      </div>
+
     </footer>
   );
 };
+

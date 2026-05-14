@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and settings",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "isDarkMode": { "type": "boolean" },
+        "updatedAt": { "type": "number" },
+        "userName": { "type": "string" }
+      },
+      "required": ["uid", "updatedAt"]
+    },
+    "FileMeta": {
+      "title": "FileMeta",
+      "description": "Metadata for a processed file",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "size": { "type": "number" },
+        "type": { "type": "string" },
+        "date": { "type": "number" },
+        "fileData": { "type": "string" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["id", "uid", "name", "size", "type", "date", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and top-level settings"
+    },
+    "/users/{userId}/files/{fileId}": {
+      "schema": "FileMeta",
+      "description": "User's processed files and their content (base64 string)"
+    }
+  }
+}
