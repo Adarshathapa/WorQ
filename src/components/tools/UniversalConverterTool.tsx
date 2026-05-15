@@ -61,7 +61,7 @@ export const UniversalConverterTool: React.FC = () => {
 
       saveFile({
         name: `WorQ-Ai_Converted_${file.name.split('.')[0]}.${outputFormat}`,
-        toolName: 'Universal Converter',
+        toolName: 'File Converter',
         type: mimeType,
         size: blob?.size || 0
       }, blob);
@@ -155,7 +155,7 @@ export const UniversalConverterTool: React.FC = () => {
 
       {/* TOOL GUIDE SECTION */}
       <ToolGuide 
-        toolName="Universal Converter"
+        toolName="File Converter"
         description="Convert any file to multiple formats like Doc to PDF, PDF to Doc, Word to PDF, image formats and more in one place."
         steps={[
           "Select the file you want to convert.",
@@ -173,9 +173,9 @@ export const UniversalConverterTool: React.FC = () => {
           input: "Company_Report.docx",
           output: "Company_Report.pdf"
         }}
-        seoContent="Convert any file online free with WorQ-Ai's Universal Converter. Easily transform Word to PDF, PDF to Doc, and many other formats instantly without losing quality. Our secure tool processes your files quickly and reliably on your device."
+        seoContent="Convert any file online free with WorQ-Ai's File Converter. Easily transform Word to PDF, PDF to Doc, and many other formats instantly without losing quality. Our secure tool processes your files quickly and reliably on your device."
         faqs={[
-          { q: "Is the universal converter free?", a: "Yes, you can convert your files for free." },
+          { q: "Is the file converter free?", a: "Yes, you can convert your files for free." },
           { q: "Are my files kept private?", a: "Yes, all processing is done locally on your device ensuring maximum privacy." },
           { q: "What formats are supported?", a: "We support a wide variety of formats including PDF, DOCX, TXT, RTF, JPG, and PNG." }
         ]}

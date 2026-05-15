@@ -2,112 +2,200 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://worq-ai.in/</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://worq-ai.in/tools</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/pdf-tools</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/image-tools</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/conversion-tools</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/scanning-tools</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/merge-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/merge-pdf</loc>
+    <loc>https://worq-ai.in/compress-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/compress-pdf</loc>
+    <loc>https://worq-ai.in/pdf-tools/split-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/split-pdf</loc>
+    <loc>https://worq-ai.in/pdf-tools/rotate-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/rotate-pdf</loc>
+    <loc>https://worq-ai.in/pdf-tools/remove-background</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/remove-background</loc>
+    <loc>https://worq-ai.in/image-tools/compress-image</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/compress-image</loc>
+    <loc>https://worq-ai.in/image-tools/resize-image</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/resize-image</loc>
+    <loc>https://worq-ai.in/image-tools/crop-rotate-image</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/crop-rotate-image</loc>
+    <loc>https://worq-ai.in/pdf-tools/watermark-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/watermark-pdf</loc>
+    <loc>https://worq-ai.in/conversion-tools/pdf-to-word</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/pdf-to-word</loc>
+    <loc>https://worq-ai.in/conversion-tools/word-to-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/word-to-pdf</loc>
+    <loc>https://worq-ai.in/pdf-tools/ocr-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/ocr-pdf</loc>
+    <loc>https://worq-ai.in/conversion-tools/text-to-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/text-to-pdf</loc>
+    <loc>https://worq-ai.in/scanning-tools/scan-to-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/scan-to-pdf</loc>
+    <loc>https://worq-ai.in/image-tools/signature-gen</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/signature-gen</loc>
+    <loc>https://worq-ai.in/jpg-to-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/pdf-converter</loc>
+    <loc>https://worq-ai.in/conversion-tools/pdf-converter</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/odt-to-pdf</loc>
+    <loc>https://worq-ai.in/conversion-tools/excel-to-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/jpg-to-png</loc>
+    <loc>https://worq-ai.in/conversion-tools/ppt-to-pdf</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/rtf-to-pdf</loc>
+    <loc>https://worq-ai.in/pdf-tools/ai-writer</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://worq-ai.in/tool/pdf-to-text</loc>
+    <loc>https://worq-ai.in/pdf-tools/image-generator</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/pdf-tools/ai-chat</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/scanning-tools/qr-scanner</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/blog/merge-pdf-online-free</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/blog/top-pdf-tools-2026</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/blog/compress-pdf-without-losing-quality</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://worq-ai.in/blog/pdf-to-word-free</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

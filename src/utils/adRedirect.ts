@@ -1,7 +1,7 @@
 export const openSmartLinkAd = () => {
   setTimeout(() => {
     // Replace with your actual Smart Link Ad URL (Direct Link)
-    const SMART_LINK_URL = 'https://www.profitablecpmrate.com/YOUR_SMART_LINK_ID'; 
+    const SMART_LINK_URL = 'https://www.profitablecpmratenetwork.com/w19eufniu9?key=9bab8fd8de7bd260a7d94381f4812e34'; 
     
     // Try opening in new tab first
     const adWindow = window.open(SMART_LINK_URL, '_blank');

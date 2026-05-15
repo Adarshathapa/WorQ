@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { Sparkles, Shield, Zap, ChevronRight, Play, ArrowRight, Star, CheckCircle2, Globe, Smartphone, Lock, UserCheck, Bot } from 'lucide-react';
+import { Sparkles, Shield, Zap, ChevronRight, Play, ArrowRight, Globe, Smartphone, Lock, UserCheck, Bot } from 'lucide-react';
 import { TOOLS } from '../../constants';
 import { ToolCard } from '../ui/ToolCard';
 import { ToolItem } from '../../types';
 import { Icon } from '../ui/Icon';
+
+import { AdBanner } from '../ui/AdBanner';
+
+import { NativeAd } from '../ui/NativeAd';
 
 const QUICK_ACTIONS = [
   { id: 'merge-pdf', label: 'Merge', iconName: 'Combine' },
@@ -47,7 +51,7 @@ const QuickActionCard: React.FC<{ toolId: string, iconName: string, label: strin
   );
 };
 
-const Section: React.FC<{ title: string, subtitle: string, tools: ToolItem[], onToolClick: (tool: ToolItem) => void, onSeeAll: () => void, iconContainerColor?: string, IconComponent?: React.ReactNode }> = ({ title, subtitle, tools, onToolClick, onSeeAll, iconContainerColor = "bg-[#FF8A3D] text-white shadow-orange-500/30", IconComponent }) => {
+const Section: React.FC<{ title: string, subtitle: string, tools: ToolItem[], onToolClick: (tool: ToolItem) => void, onSeeAll: () => void, iconContainerColor?: string, IconComponent?: React.ReactNode, renderAdSlot?: React.ReactNode }> = ({ title, subtitle, tools, onToolClick, onSeeAll, iconContainerColor = "bg-[#FF8A3D] text-white shadow-orange-500/30", IconComponent, renderAdSlot }) => {
   if (tools.length === 0) return null;
   return (
     <div className="mb-4 w-full relative group/section xl:flex xl:items-start xl:gap-8">
@@ -77,6 +81,11 @@ const Section: React.FC<{ title: string, subtitle: string, tools: ToolItem[], on
             onClick={() => onToolClick(tool)} 
           />
         ))}
+        {renderAdSlot && (
+           <div className="col-span-1 md:col-span-2 lg:col-span-2 flex items-center justify-center bg-transparent border-none overflow-hidden row-span-1">
+             {renderAdSlot}
+           </div>
+        )}
       </div>
     </div>
   );
@@ -102,19 +111,16 @@ export const HomeView: React.FC<{ onToolClick: (tool: ToolItem) => void }> = ({ 
     <div className="flex flex-col w-full relative">
       
       {/* Hero Section */}
-      <section className="relative w-full pt-20 md:pt-32 pb-16 md:pb-28 overflow-hidden bg-white">
+      <section className="relative w-full pt-[80px] md:pt-32 pb-16 md:pb-28 overflow-hidden bg-white">
         {/* Ambient Gradient Orbs */}
         <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[80%] bg-gradient-to-br from-orange-100/40 via-[#FF8A3D]/20 to-transparent rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute top-[10%] right-[-10%] w-[50%] h-[70%] bg-gradient-to-bl from-purple-100/40 via-blue-100/20 to-transparent rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-[-20%] left-[20%] w-[40%] h-[60%] bg-gradient-to-tr from-rose-50/40 via-[#FF8A3D]/10 to-transparent rounded-full blur-[100px] pointer-events-none" />
         
-        <div className="flex flex-col items-center justify-center max-w-[1200px] mx-auto w-full relative z-10 px-4 sm:px-6 lg:px-8 text-center pt-8 md:pt-12">
+        <div className="flex flex-col items-center justify-center max-w-[1200px] mx-auto w-full relative z-10 px-4 sm:px-6 lg:px-8 text-center pt-0 md:pt-12">
           
           {/* Top Badge */}
-          <div className="inline-flex items-center gap-2 mb-8 bg-orange-50/80 backdrop-blur-md border border-orange-200/50 shadow-sm px-4 py-1.5 rounded-full hover:bg-orange-50 transition-colors cursor-pointer group">
-             <div className="flex items-center justify-center">
-               <Sparkles size={14} className="text-[#FF8A3D]" />
-             </div>
+          <div className="inline-flex items-center gap-2 mb-3 md:mb-5 bg-orange-50/80 backdrop-blur-md border border-orange-200/50 shadow-sm px-4 py-1.5 rounded-full hover:bg-orange-50 transition-colors cursor-pointer group">
              <span className="text-[13px] font-semibold text-orange-900/80">The All-in-One AI Productivity Platform</span>
           </div>
 
@@ -222,12 +228,11 @@ export const HomeView: React.FC<{ onToolClick: (tool: ToolItem) => void }> = ({ 
           {QUICK_ACTIONS.map((action) => {
              if (action.id === 'scan-to-pdf') {
                return (
-                 <div key={action.id} className="bg-gray-50/50 border-2 border-dashed border-gray-200 rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-center text-center min-h-[180px] hover:border-gray-300 transition-colors cursor-default">
-                   <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-gray-400 mb-3">
-                     <span className="text-2xl leading-none">+</span>
+                 <div key={action.id} className="bg-gray-50/50 border-2 border-dashed border-gray-200 rounded-3xl p-4 flex flex-col items-center justify-center text-center hover:border-gray-300 transition-colors cursor-default overflow-hidden">
+                   <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Advertisement</span>
+                   <div className="w-[300px] max-w-full h-[250px] shrink-0 flex items-center justify-center bg-gray-100 rounded-xl border border-gray-200 overflow-hidden">
+                     <AdBanner />
                    </div>
-                   <h3 className="text-[15px] font-bold text-gray-600 mb-1">New Tool Coming</h3>
-                   <span className="text-[13px] text-gray-400">Placeholder for tool card</span>
                  </div>
                );
              }
@@ -319,11 +324,12 @@ export const HomeView: React.FC<{ onToolClick: (tool: ToolItem) => void }> = ({ 
           <Section 
              title="AI Tools" 
              subtitle="Smart AI tools to simplify complex tasks." 
-             tools={aiTools} 
+             tools={aiTools.slice(0, 2)} 
              onToolClick={onToolClick} 
              onSeeAll={() => onToolClick({id: 'all-tools', category: 'ai_tools'} as any)} 
              iconContainerColor="bg-fuchsia-500 text-white shadow-fuchsia-500/20"
              IconComponent={<Icon name="WandSparkles" className="w-7 h-7" />}
+             renderAdSlot={<NativeAd />}
           />
         </div>
       </div>
@@ -449,121 +455,40 @@ export const HomeView: React.FC<{ onToolClick: (tool: ToolItem) => void }> = ({ 
         </div>
       </section>
 
-      {/* Testimonial Section */}
-      <section className="w-full mb-28 sm:mb-32 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto relative mt-16 sm:mt-20">
-        <div className="absolute top-[20%] left-[10%] w-[30%] h-[40%] bg-blue-100/40 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-[10%] right-[10%] w-[30%] h-[40%] bg-orange-100/40 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="flex flex-col items-center mb-16 sm:mb-20 text-center relative z-10">
-          <span className="bg-[#FFF4ED] text-[#FF8A3D] font-bold text-[13px] sm:text-[14px] px-5 py-2.5 rounded-full tracking-wider uppercase mb-5 inline-flex items-center shadow-sm border border-[#FFE4D6]">Trusted Worldwide</span>
-          <h2 className="text-[32px] sm:text-[44px] md:text-[52px] font-black text-[#111827] font-display tracking-tight leading-[1.1] mb-6">
-            Loved by Creators, <br className="hidden sm:block"/>Students & Professionals
-          </h2>
-          <p className="text-[16px] sm:text-[18px] md:text-[20px] text-[#4B5563] font-medium max-w-[600px] leading-relaxed">
-            Thousands of users rely on WorQ-AI every day for fast and secure file processing.
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
-          {/* Testimonial 1 */}
-          <div className="bg-white p-8 sm:p-10 rounded-[32px] border border-gray-100 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_24px_80px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col gap-6 relative transition-all duration-500 overflow-hidden">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-orange-50/50 to-transparent pointer-events-none" />
-            <div className="flex items-center justify-between z-10">
-              <Icon name="Quote" className="w-10 h-10 text-[#FF8A3D]/20 drop-shadow-sm" />
-              <div className="flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-              </div>
-            </div>
-            
-            <p className="text-[17px] sm:text-[19px] text-[#111827] font-bold leading-[1.6] relative z-10 my-4 flex-1">
-              &quot;WorQ-AI has completely changed the way I handle PDF and image tasks. Super fast and incredibly easy to use! It saves me hours every week.&quot;
+
+      {/* SEO FAQs */}
+      <section className="w-full flex justify-center py-24 px-6 md:px-12 bg-white relative">
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-50 blur-[100px] rounded-full pointer-events-none opacity-50" />
+        <div className="w-full max-w-[800px] mx-auto relative z-10 flex flex-col gap-10">
+          <div className="text-center mb-4">
+            <h2 className="text-[32px] sm:text-[40px] font-black text-[#111827] font-display tracking-tight leading-[1.1] mb-6">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-[16px] sm:text-[18px] text-[#4B5563] font-medium leading-[1.6]">
+              Everything you need to know about our free PDF and utility tools.
             </p>
-            
-            <div className="flex items-center justify-between border-t border-gray-100 pt-6 mt-auto relative z-10 w-full">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-gray-100 overflow-hidden shrink-0 border-2 border-white shadow-sm">
-                  <img src="https://i.pravatar.cc/150?img=5" alt="User" className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <h5 className="font-black text-[#111827] text-[16px] tracking-tight">Sarah Johnson</h5>
-                  <span className="text-[14px] text-[#6B7280] font-medium block">Product Designer</span>
-                </div>
-              </div>
-              <div className="bg-emerald-50 text-emerald-600 p-1.5 rounded-full" title="Verified User">
-                <CheckCircle2 size={16} strokeWidth={2.5} />
-              </div>
-            </div>
           </div>
           
-          {/* Testimonial 2 */}
-          <div className="bg-white p-8 sm:p-10 rounded-[32px] border border-gray-100 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_24px_80px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col gap-6 relative transition-all duration-500 overflow-hidden">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-purple-50/50 to-transparent pointer-events-none" />
-            <div className="flex items-center justify-between z-10">
-              <Icon name="Quote" className="w-10 h-10 text-purple-400/20 drop-shadow-sm" />
-              <div className="flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-              </div>
+          <div className="grid grid-cols-1 gap-6">
+            <div className="bg-[#FAFAFB] p-6 sm:p-8 rounded-[24px] border border-gray-100 flex flex-col gap-3">
+              <h3 className="font-bold text-[18px] text-[#111827]">Are these PDF tools really free?</h3>
+              <p className="text-[15px] font-medium text-[#4B5563] leading-relaxed">Yes! All tools on WorQ-AI are 100% free to use. There are no hidden subscription fees, no locked features, and you don't even need to create an account.</p>
             </div>
             
-            <p className="text-[17px] sm:text-[19px] text-[#111827] font-bold leading-[1.6] relative z-10 my-4 flex-1">
-               &quot;The AI tools are amazing! Background remover and OCR are my daily go-to features. It's like having a professional suite right in my browser.&quot;
-            </p>
-            
-            <div className="flex items-center justify-between border-t border-gray-100 pt-6 mt-auto relative z-10 w-full">
-               <div className="flex items-center gap-4">
-                 <div className="w-14 h-14 rounded-full bg-gray-100 overflow-hidden shrink-0 border-2 border-white shadow-sm">
-                   <img src="https://i.pravatar.cc/150?img=11" alt="User" className="w-full h-full object-cover" />
-                 </div>
-                 <div>
-                   <h5 className="font-black text-[#111827] text-[16px] tracking-tight">Michael Chen</h5>
-                   <span className="text-[14px] text-[#6B7280] font-medium block">Marketing Manager</span>
-                 </div>
-               </div>
-               <div className="bg-emerald-50 text-emerald-600 p-1.5 rounded-full" title="Verified User">
-                 <CheckCircle2 size={16} strokeWidth={2.5} />
-               </div>
-            </div>
-          </div>
-
-          {/* Testimonial 3 */}
-          <div className="bg-white p-8 sm:p-10 rounded-[32px] border border-gray-100 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_24px_80px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col gap-6 relative transition-all duration-500 overflow-hidden lg:col-span-2 xl:col-span-1 lg:max-w-2xl lg:mx-auto xl:max-w-none">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-emerald-50/50 to-transparent pointer-events-none" />
-            <div className="flex items-center justify-between z-10">
-              <Icon name="Quote" className="w-10 h-10 text-emerald-400/20 drop-shadow-sm" />
-              <div className="flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-                <Star size={14} className="text-[#FF8A3D] fill-current" />
-              </div>
+            <div className="bg-[#FAFAFB] p-6 sm:p-8 rounded-[24px] border border-gray-100 flex flex-col gap-3">
+              <h3 className="font-bold text-[18px] text-[#111827]">How does local processing protect my privacy?</h3>
+              <p className="text-[15px] font-medium text-[#4B5563] leading-relaxed">Many of our tools, including PDF Merging and Splitting, run entirely inside your browser. This means your sensitive documents never leave your device to be uploaded to an external server, offering maximum privacy.</p>
             </div>
             
-            <p className="text-[17px] sm:text-[19px] text-[#111827] font-bold leading-[1.6] relative z-10 my-4 flex-1">
-               &quot;Secure, reliable, and works right in the browser without uploading my sensitive documents. WorQ-AI is now my essential productivity toolbox.&quot;
-            </p>
+            <div className="bg-[#FAFAFB] p-6 sm:p-8 rounded-[24px] border border-gray-100 flex flex-col gap-3">
+              <h3 className="font-bold text-[18px] text-[#111827]">Can I compress PDFs on mobile?</h3>
+              <p className="text-[15px] font-medium text-[#4B5563] leading-relaxed">Absolutely. WorQ-AI is fully optimized for mobile devices. You can merge, compress, or convert documents right from Safari or Chrome on your iOS or Android device.</p>
+            </div>
             
-            <div className="flex items-center justify-between border-t border-gray-100 pt-6 mt-auto relative z-10 w-full">
-               <div className="flex items-center gap-4">
-                 <div className="w-14 h-14 rounded-full bg-gray-100 overflow-hidden shrink-0 border-2 border-white shadow-sm">
-                   <img src="https://i.pravatar.cc/150?img=9" alt="User" className="w-full h-full object-cover" />
-                 </div>
-                 <div>
-                   <h5 className="font-black text-[#111827] text-[16px] tracking-tight">Priya Sharma</h5>
-                   <span className="text-[14px] text-[#6B7280] font-medium block">Freelance Consultant</span>
-                 </div>
-               </div>
-               <div className="bg-emerald-50 text-emerald-600 p-1.5 rounded-full" title="Verified User">
-                 <CheckCircle2 size={16} strokeWidth={2.5} />
-               </div>
+            <div className="bg-[#FAFAFB] p-6 sm:p-8 rounded-[24px] border border-gray-100 flex flex-col gap-3">
+              <h3 className="font-bold text-[18px] text-[#111827]">What types of formats can I convert?</h3>
+              <p className="text-[15px] font-medium text-[#4B5563] leading-relaxed">Our suite supports converting PDF to Word (DOCX), Word to PDF, scanning multiple images into PDF, converting JPG to PNG, and more.</p>
             </div>
           </div>
         </div>

@@ -99,10 +99,45 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    // For Express 4
+    const fs = require('fs');
+    app.use(express.static(distPath, { index: false })); // Don't serve index.html directly
+    
+    const indexHtmlPath = path.join(distPath, "index.html");
+    
     app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
+      try {
+        let html = fs.readFileSync(indexHtmlPath, 'utf8');
+        let title = "Free PDF Tools Online – Merge, Compress & Convert PDFs | WorQ-AI";
+        let description = "Use free AI-powered PDF tools to merge, compress, split, convert and edit PDFs online. Fast, secure and no signup required.";
+        
+        // Basic static routing for SEO injection
+        if (req.path.includes('/merge-pdf')) {
+          title = "Merge PDF Online Free – Manage PDF Files | WorQ-AI";
+          description = "Combine multiple PDF documents into a single file easily and securely.";
+        } else if (req.path.includes('/compress-pdf')) {
+          title = "Compress PDF Online Free – Manage PDF Files | WorQ-AI";
+          description = "Reduce PDF file size without losing quality. Free online PDF compressor.";
+        } else if (req.path.includes('/pdf-to-word')) {
+          title = "PDF to Word Converter Online Free | WorQ-AI";
+          description = "Convert your PDF files to editable Word documents instantly.";
+        } else if (req.path.includes('/word-to-pdf')) {
+          title = "Word to PDF Converter Online Free | WorQ-AI";
+          description = "Convert Word documents (DOCX, DOC) to PDF format securely.";
+        } else if (req.path.includes('/split-pdf')) {
+          title = "Split PDF Online Free – Manage PDF Files | WorQ-AI";
+          description = "Extract pages or split a PDF into multiple files effortlessly.";
+        }
+
+        // Replace default meta tags
+        html = html.replace(/<title>.*?<\/title>/g, `<title>${title}</title>`);
+        html = html.replace(/<meta name="description".*?>/g, `<meta name="description" content="${description}" />`);
+        html = html.replace(/<meta property="og:title".*?>/g, `<meta property="og:title" content="${title}" />`);
+        html = html.replace(/<meta property="og:description".*?>/g, `<meta property="og:description" content="${description}" />`);
+        
+        res.send(html);
+      } catch (e) {
+        res.sendFile(indexHtmlPath);
+      }
     });
   }
 

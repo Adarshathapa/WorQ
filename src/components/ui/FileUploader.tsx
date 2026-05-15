@@ -1,5 +1,27 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { CloudUpload, Lock, Upload, File as FileIcon, X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { 
+  CloudUpload, Lock, Upload, File as FileIcon, X, CheckCircle2, AlertCircle, Loader2,
+  FileImage, FileText, FileSpreadsheet, FileArchive, FileAudio, FileVideo, FileCode
+} from 'lucide-react';
+
+const getFileIcon = (file: File) => {
+  const type = file.type;
+  if (type.startsWith('image/')) return FileImage;
+  if (type.startsWith('video/')) return FileVideo;
+  if (type.startsWith('audio/')) return FileAudio;
+  if (type.includes('pdf')) return FileText;
+  if (type.includes('spreadsheet') || type.includes('excel') || type.includes('csv')) return FileSpreadsheet;
+  if (type.includes('zip') || type.includes('tar') || type.includes('rar') || type.includes('compressed')) return FileArchive;
+  if (type.includes('json') || type.includes('xml') || type.includes('html') || type.includes('text/css') || type.includes('javascript')) return FileCode;
+  
+  const ext = file.name.split('.').pop()?.toLowerCase();
+  if (['doc', 'docx', 'txt', 'rtf'].includes(ext || '')) return FileText;
+  if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext || '')) return FileArchive;
+  if (['xls', 'xlsx', 'csv'].includes(ext || '')) return FileSpreadsheet;
+  if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext || '')) return FileImage;
+
+  return FileIcon;
+};
 
 export interface FileUploaderProps {
   onFilesSelected: (files: File[]) => void;
@@ -94,10 +116,10 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   return (
     <div className="flex flex-col w-full relative group z-20 max-w-[800px] mx-auto mb-8 sm:mb-12">
       <div 
-        className={`w-full ${selectedFiles.length > 0 ? 'min-h-[140px] sm:min-h-[160px]' : 'min-h-[260px] sm:min-h-[340px]'} rounded-[32px] border-[3px] border-dashed flex flex-col items-center justify-center text-center px-6 transition-all duration-300 cursor-pointer relative overflow-hidden bg-white/50 backdrop-blur-sm
+        className={`w-full ${selectedFiles.length > 0 ? 'min-h-[140px] sm:min-h-[160px]' : 'min-h-[280px] sm:min-h-[360px]'} rounded-[32px] border-[2px] border-dashed flex flex-col items-center justify-center text-center px-6 transition-all duration-400 cursor-pointer relative overflow-hidden bg-white/80 backdrop-blur-md
           ${isDragging 
-            ? 'border-[#FF8A3D] bg-[#FF8A3D]/5 scale-[1.02] shadow-[0_32px_64px_rgba(255,138,61,0.15)] ring-4 ring-[#FF8A3D]/20 ring-offset-4' 
-            : 'border-orange-200/50 hover:border-[#FF8A3D] hover:bg-[#FF8A3D]/[0.02] hover:shadow-[0_20px_48px_rgba(255,138,61,0.1)] shadow-[0_8px_24px_rgba(0,0,0,0.02)]'
+            ? 'border-[#FF8A3D] bg-[#FFF4ED] scale-[1.02] shadow-[0_32px_64px_rgba(255,138,61,0.15)] ring-4 ring-[#FF8A3D]/20' 
+            : 'border-gray-200 hover:border-[#FF8A3D]/60 hover:bg-[#FF8A3D]/[0.01] hover:shadow-[0_24px_48px_-12px_rgba(255,138,61,0.12)] shadow-[0_8px_24px_rgba(0,0,0,0.02)]'
           }
         `}
         onDragEnter={handleDragEnter}
@@ -123,35 +145,35 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
               {/* Animated Icon Container for empty state */}
               <div className="relative mb-6 sm:mb-8">
                 <div className={`absolute inset-0 bg-[#FF8A3D] rounded-full blur-[32px] transition-all duration-500 ease-out 
-                  ${isDragging ? 'opacity-50 scale-[1.8]' : 'opacity-20 scale-125 group-hover:scale-[1.5] group-hover:opacity-40'}`} 
+                  ${isDragging ? 'opacity-30 scale-[1.8]' : 'opacity-10 scale-125 group-hover:scale-[1.4] group-hover:opacity-20'}`} 
                 />
-                <div className={`w-20 h-20 md:w-24 md:h-24 rounded-[22px] bg-gradient-to-br from-[#FF8A3D] to-[#FF7A18] text-white flex items-center justify-center relative z-10 shadow-xl transition-all duration-500 border border-white/20
-                  ${isDragging ? 'scale-110 -translate-y-2' : 'group-hover:scale-105 group-hover:-translate-y-1'}
+                <div className={`w-16 h-16 md:w-20 md:h-20 rounded-[20px] bg-white text-[#111827] flex items-center justify-center relative z-10 shadow-[0_8px_32px_rgba(0,0,0,0.06)] transition-all duration-500 border border-gray-100
+                  ${isDragging ? 'scale-110 -translate-y-2 !bg-[#FF8A3D] !text-white !border-[#FF8A3D]' : 'group-hover:scale-105 group-hover:-translate-y-1'}
                 `}>
-                  <CloudUpload size={40} strokeWidth={2} className={`${isDragging ? 'animate-bounce' : ''}`} />
+                  <CloudUpload size={32} strokeWidth={2} className={`${isDragging ? 'animate-bounce' : ''}`} />
                 </div>
                 
                 {/* Decorative small icons */}
-                <div className={`absolute -right-4 -top-2 w-10 h-10 rounded-[14px] bg-white border border-gray-100 shadow-lg flex items-center justify-center text-[#FF8A3D] transition-all duration-500 z-20 
-                  ${isDragging ? 'opacity-0 translate-x-4' : 'opacity-100 group-hover:translate-x-3 group-hover:-translate-y-3'}`}>
-                  <FileIcon size={18} />
+                <div className={`absolute -right-5 -top-3 w-10 h-10 rounded-full bg-white border border-gray-100 shadow-md flex items-center justify-center text-gray-400 transition-all duration-500 z-20 
+                  ${isDragging ? 'opacity-0 translate-x-4' : 'opacity-100 group-hover:translate-x-2 group-hover:-translate-y-2 group-hover:text-[#FF8A3D]'}`}>
+                  <FileIcon size={16} />
                 </div>
-                <div className={`absolute -left-4 bottom-0 w-8 h-8 rounded-[12px] bg-white border border-gray-100 shadow-md flex items-center justify-center text-[#FF8A3D] transition-all duration-500 z-20 delay-75
-                  ${isDragging ? 'opacity-0 -translate-x-4' : 'opacity-100 group-hover:-translate-x-3 group-hover:translate-y-2'}`}>
+                <div className={`absolute -left-4 -bottom-1 w-8 h-8 rounded-full bg-white border border-gray-100 shadow-md flex items-center justify-center text-gray-400 transition-all duration-500 z-20 delay-75
+                  ${isDragging ? 'opacity-0 -translate-x-4' : 'opacity-100 group-hover:-translate-x-2 group-hover:translate-y-1 group-hover:text-[#FF8A3D]'}`}>
                   <Upload size={14} />
                 </div>
               </div>
               
-              <div className="flex flex-col gap-3 items-center pointer-events-none">
-                <h3 className="text-[24px] md:text-[32px] font-black text-[#111827] font-display tracking-tight drop-shadow-sm transition-all duration-300">
+              <div className="flex flex-col gap-2 items-center pointer-events-none">
+                <h3 className="text-[22px] md:text-[26px] font-bold text-[#111827] tracking-tight transition-all duration-300">
                   {isDragging ? 'Drop files now...' : label}
                 </h3>
-                <p className="text-[16px] sm:text-[18px] text-[#6B7280] font-medium max-w-[300px] transition-all duration-300">
+                <p className="text-[15px] text-[#6B7280] font-medium max-w-[300px] transition-all duration-300">
                   {isDragging ? 'Release to begin processing' : defaultSubLabel}
                 </p>
                 {!isDragging && (
-                   <div className="mt-2 bg-[#FF8A3D] text-white rounded-full px-8 py-3 border border-orange-400 shadow-md shadow-orange-500/20 font-semibold transition-all transform group-hover:scale-105 group-hover:bg-[#FF7A18] group-hover:shadow-lg group-hover:shadow-orange-500/30 group-active:scale-95 pointer-events-auto flex items-center justify-center gap-2">
-                     Choose Files
+                   <div className="mt-4 bg-[#111827] text-white rounded-full px-8 py-3 cursor-pointer shadow-[0_4px_14px_rgba(0,0,0,0.1)] font-medium transition-all transform group-hover:scale-105 group-hover:bg-[#1f2937] group-hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)] group-active:scale-95 pointer-events-auto flex items-center justify-center gap-2">
+                     Select Files
                    </div>
                 )}
               </div>
@@ -187,6 +209,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
               const isDone = status === 'done';
               const isError = status === 'error';
               
+              const DynamicIcon = getFileIcon(f);
+              
               return (
                 <div key={`${f.name}-${i}`} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors relative overflow-hidden">
                   
@@ -211,7 +235,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                         {isDone ? <CheckCircle2 size={20} /> : 
                          isError ? <AlertCircle size={20} /> : 
                          isProcessing ? <Loader2 size={20} className="animate-spin" /> : 
-                         <FileIcon size={20} />}
+                         <DynamicIcon size={20} />}
                       </div>
                       
                       <div className="min-w-0 flex-1">

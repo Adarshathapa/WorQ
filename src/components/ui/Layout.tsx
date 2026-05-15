@@ -31,10 +31,10 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, onTabChange, children
             <div className="w-8 h-8 md:w-9 md:h-9 rounded-[10px] md:rounded-xl bg-[#111827] flex items-center justify-center shadow-lg shadow-black/10 border border-white/10 relative overflow-hidden transition-all group-hover:bg-[#FF8A3D]">
               <FileStack className="text-white w-4 h-4 md:w-4 md:h-4" strokeWidth={2.5} />
             </div>
-            <h1 className="text-[17px] md:text-[20px] text-[#111827] leading-none tracking-tight font-display flex items-baseline">
+            <div className="text-[17px] md:text-[20px] text-[#111827] leading-none tracking-tight font-display flex items-baseline">
               <span className="font-extrabold tracking-tight">WorQ</span>
               <span className="font-medium text-gray-400 ml-[1px] tracking-[0.1em] text-[12px] md:text-[13px]">-AI</span>
-            </h1>
+            </div>
           </div>
 
           {/* Desktop Navigation - Center */}
@@ -100,10 +100,10 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, onTabChange, children
                   <div className="w-8 h-8 rounded-[10px] bg-[#111827] flex items-center justify-center shadow-md relative overflow-hidden">
                     <FileStack className="text-white w-4 h-4" strokeWidth={2.5} />
                   </div>
-                  <h1 className="text-[18px] text-[#111827] leading-none tracking-tight font-display flex items-baseline">
+                  <div className="text-[18px] text-[#111827] leading-none tracking-tight font-display flex items-baseline">
                     <span className="font-extrabold tracking-tight">WorQ</span>
                     <span className="font-medium text-[#FF8A3D] ml-[1px] tracking-[0.1em] text-[11px]">-AI</span>
-                  </h1>
+                  </div>
                 </div>
                 <button 
                   onClick={() => setIsMobileMenuOpen(false)}

@@ -19,11 +19,11 @@ import { PdfWordTool } from '../tools/PdfWordTool';
 import { WordPdfTool } from '../tools/WordPdfTool';
 import { UniversalConverterTool } from '../tools/UniversalConverterTool';
 import { SignatureGenTool } from '../tools/SignatureGenTool';
-import { RelatedTools } from '../ui/RelatedTools';
 import { OdtPdfTool } from '../tools/OdtPdfTool';
 import { JpgPngTool } from '../tools/JpgPngTool';
 import { RtfPdfTool } from '../tools/RtfPdfTool';
 import { PdfTextTool } from '../tools/PdfTextTool';
+import { NativeAd } from '../ui/NativeAd';
 
 const TOOL_COMPONENTS: Record<string, React.FC> = {
   'merge-pdf': MergePdfTool,
@@ -41,6 +41,7 @@ const TOOL_COMPONENTS: Record<string, React.FC> = {
   'pdf-to-word': PdfWordTool,
   'word-to-pdf': WordPdfTool,
   'pdf-converter': UniversalConverterTool,
+  'jpg-to-pdf': UniversalConverterTool,
   'signature-gen': SignatureGenTool,
   'odt-to-pdf': OdtPdfTool,
   'jpg-to-png': JpgPngTool,
@@ -49,19 +50,45 @@ const TOOL_COMPONENTS: Record<string, React.FC> = {
 };
 
 const getSeoData = (tool: ToolItem) => {
-  const baseName = tool.name;
-  let title = `${baseName} – Free Online Tool`;
-  let h1 = `Free Online ${baseName} Tool`;
+  if (tool.id === 'merge-pdf') {
+    return {
+      title: 'Merge PDF Online Free | Fast PDF Merger Tool - Worq AI',
+      h1: 'Merge PDF Online Free',
+      description: 'Merge PDF files online for free with Worq AI. Combine multiple PDFs instantly with a fast, secure and easy-to-use PDF merger tool.'
+    };
+  }
+  if (tool.id === 'compress-pdf') {
+    return {
+      title: 'Compress PDF Online Free Without Losing Quality | Worq AI',
+      h1: 'Compress PDF Online Free',
+      description: 'Reduce PDF file size online for free without noticeable quality loss. Fast and secure PDF compressor by Worq AI.'
+    };
+  }
+  if (tool.id === 'jpg-to-pdf') {
+    return {
+      title: 'JPG to PDF Converter Online Free | Worq AI',
+      h1: 'Convert JPG to PDF Online',
+      description: 'Convert JPG images to PDF online for free. Easy image-to-PDF conversion with fast processing and high-quality output.'
+    };
+  }
+
+  let baseName = tool.name;
+  if (tool.id === 'remove-background') baseName = 'BG Remove';
+  if (tool.id === 'pdf-converter') baseName = 'File Converter';
+  
+  let title = `${baseName} Online – Free ${baseName} Tool`;
+  let h1 = baseName === 'BG Remove' ? 'BG Remove' : baseName === 'File Converter' ? 'File Converter Online' : `${baseName} Online`;
+  let description = tool.description;
   
   if (baseName.toLowerCase().includes('pdf') || tool.category === 'pdf') {
-    title = `${baseName} Files – Free PDF Editor Online`;
-  } else if (baseName.toLowerCase().includes('image') || tool.category === 'image') {
-    title = `${baseName} – Free Online Image Editor`;
+    title = `${baseName} Online Free – Manage PDF Files | WorQ-AI`;
+  } else if (baseName.toLowerCase().includes('image') || tool.category === 'image' || tool.id === 'remove-background') {
+    title = `${baseName} Online – Free Image Editor | WorQ-AI`;
   } else if (tool.category === 'conversion') {
-    title = `${baseName} – Free Online File Converter`;
+    title = `${baseName} – Free File Converter Online | WorQ-AI`;
   }
   
-  return { title, h1 };
+  return { title, h1, description };
 };
 
 export const ToolExecutionView: React.FC<{ tool: ToolItem; onBack: () => void; onToolSelect?: (tool: ToolItem) => void }> = ({ tool, onBack, onToolSelect }) => {
@@ -86,7 +113,7 @@ export const ToolExecutionView: React.FC<{ tool: ToolItem; onBack: () => void; o
 
   return (
     <div className="flex flex-col w-full min-h-screen bg-[#FAFAFB] animate-in fade-in slide-in-from-right-8 duration-500">
-      <SEO title={seoData.title} description={tool.description} canonical={`https://worq-ai.in/tool/${tool.id}`} />
+      <SEO title={seoData.title} description={seoData.description} canonical={`https://worq-ai.in/tool/${tool.id}`} />
       
       {/* Tool Header Section */}
       <div className="w-full bg-white border-b border-gray-100 pt-6 pb-6 sm:pt-8 sm:pb-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] relative z-10">
@@ -134,11 +161,9 @@ export const ToolExecutionView: React.FC<{ tool: ToolItem; onBack: () => void; o
             <div className="flex flex-col gap-8 flex-1 w-full relative z-10 w-full max-w-[1000px] mx-auto">
               <ToolComponent />
 
-              {onToolSelect && (
-                <div className="mt-6 sm:mt-12 border-t border-gray-100 pt-8 sm:pt-12">
-                   <RelatedTools currentToolId={tool.id} onToolSelect={onToolSelect} />
-                </div>
-              )}
+              <div className="mt-8 w-full flex justify-center">
+                <NativeAd />
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center min-h-[200px] text-center text-gray-400 font-medium animate-pulse">

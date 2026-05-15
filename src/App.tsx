@@ -72,6 +72,12 @@ const parseRoute = () => {
         } else {
             tab = 'home';
         }
+    } else if (p.length > 1) {
+        const id = p.slice(1);
+        const found = TOOLS.find(t => t.id === id);
+        if (found) {
+            tool = found;
+        }
     }
     
     return { tab, tool, category };
@@ -124,12 +130,16 @@ export default function App() {
        else if (tool.category === 'ai_tools') categorySlug = 'ai-tools';
        navigate(`/${categorySlug}`);
     } else {
-       let categorySlug = 'pdf-tools';
-       if (tool.category === 'image') categorySlug = 'image-tools';
-       else if (tool.category === 'conversion') categorySlug = 'conversion-tools';
-       else if (tool.category === 'scan_files') categorySlug = 'scanning-tools';
-       else if (tool.category === 'ai_tools') categorySlug = 'ai-tools';
-       navigate(`/${categorySlug}/${tool.id}`);
+       if (['merge-pdf', 'compress-pdf', 'jpg-to-pdf'].includes(tool.id)) {
+           navigate(`/${tool.id}`);
+       } else {
+           let categorySlug = 'pdf-tools';
+           if (tool.category === 'image') categorySlug = 'image-tools';
+           else if (tool.category === 'conversion') categorySlug = 'conversion-tools';
+           else if (tool.category === 'scan_files') categorySlug = 'scanning-tools';
+           else if (tool.category === 'ai_tools') categorySlug = 'ai-tools';
+           navigate(`/${categorySlug}/${tool.id}`);
+       }
     }
   };
 

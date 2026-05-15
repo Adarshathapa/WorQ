@@ -77,10 +77,10 @@ export const Footer: React.FC = () => {
                <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-[#FFA568] to-[#FF7A18] flex items-center justify-center shadow-[0_4px_12px_rgba(255,138,61,0.2)] border border-[#FF8A3D]/20">
                  <FileStack className="text-white w-5 h-5" strokeWidth={2.5} />
                </div>
-              <h1 className="text-[24px] text-[#111827] leading-none tracking-tight font-display flex items-baseline">
+              <div className="text-[24px] text-[#111827] leading-none tracking-tight font-display flex items-baseline">
                 <span className="font-extrabold tracking-tight">WorQ</span>
                 <span className="font-medium text-[#FF8A3D] ml-[1px] text-[16px] tracking-[0.08em]">-AI</span>
-              </h1>
+              </div>
             </div>
             
             <p className="text-[14px] text-gray-500 font-medium leading-[1.6]">

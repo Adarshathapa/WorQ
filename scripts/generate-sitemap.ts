@@ -42,12 +42,18 @@ async function generateSitemap() {
   // Tool Specific Pages
   for (const tool of TOOLS) {
     if (tool.id === 'my-files' || tool.id === 'all-tools') continue;
-    let categorySlug = 'pdf-tools';
-    if (tool.category === 'image') categorySlug = 'image-tools';
-    else if (tool.category === 'conversion') categorySlug = 'conversion-tools';
-    else if (tool.category === 'scan_files') categorySlug = 'scanning-tools';
     
-    addUrl(`/${categorySlug}/${tool.id}`, '0.9', 'weekly');
+    if (['merge-pdf', 'compress-pdf', 'jpg-to-pdf'].includes(tool.id)) {
+        addUrl(`/${tool.id}`, '0.9', 'weekly');
+    } else {
+        let categorySlug = 'pdf-tools';
+        if (tool.category === 'image') categorySlug = 'image-tools';
+        else if (tool.category === 'conversion') categorySlug = 'conversion-tools';
+        else if (tool.category === 'scan_files') categorySlug = 'scanning-tools';
+        else if (tool.category === 'ai_tools') categorySlug = 'ai-tools';
+        
+        addUrl(`/${categorySlug}/${tool.id}`, '0.9', 'weekly');
+    }
   }
 
   // Blog Posts

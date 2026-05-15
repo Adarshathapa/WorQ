@@ -129,8 +129,16 @@ export const TOOLS: ToolItem[] = [
     status: 'active'
   },
   {
+    id: 'jpg-to-pdf',
+    name: 'JPG to PDF',
+    description: 'Convert JPG images to PDF securely.',
+    category: 'conversion',
+    iconName: 'ArrowRightLeft',
+    status: 'active'
+  },
+  {
     id: 'pdf-converter',
-    name: 'Format Converter',
+    name: 'File Converter',
     description: 'Transform any file securely and fast',
     category: 'conversion',
     iconName: 'ArrowRightLeft',
